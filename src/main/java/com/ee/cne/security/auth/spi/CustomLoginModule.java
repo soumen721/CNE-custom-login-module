@@ -27,16 +27,15 @@ import org.jboss.security.SimpleGroup;
 import org.jboss.security.SimplePrincipal;
 import org.jboss.security.auth.spi.AbstractServerLoginModule;
 
+import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
+
+@Data
+@Slf4j
 public class CustomLoginModule extends AbstractServerLoginModule {
 
 	private Principal principal;
-
-	private String authSql;
-
-	private String rolesSql;
-
 	private String name = null;
-
 	private String password = null;
 
 	@SuppressWarnings("unused")
@@ -45,22 +44,21 @@ public class CustomLoginModule extends AbstractServerLoginModule {
 	@SuppressWarnings("unchecked")
 	public void initialize(Subject subject, CallbackHandler callbackHandler, Map sharedState, Map options) {
 		super.initialize(subject, callbackHandler, sharedState, options);
-		this.authSql = (String) options.get("authSql");
-		this.rolesSql = (String) options.get("rolesSql");
 	}
 
 	public boolean login() throws LoginException {
-
+		log.info("Inside CustomMoule >> login");
 		// this is a protected boolean in Super class
 		loginOk = false;
 		if (this.callbackHandler == null) {
-			throw new LoginException("No callback handler is available");
+			//throw new LoginException("No callback handler is available");
 		}
 
 		try {
 			@SuppressWarnings("unused")
 			HttpServletRequest request = (HttpServletRequest) PolicyContext.getContext("javax.servlet.http.HttpServletRequest");
-			System.out.println("Request User :: "+ request.getHeader("HTTP_SM_UID"));
+			name = request.getHeader("HTTP_SM_UID");
+			System.out.println("Request User :: "+ name);
 			System.out.println("Request ROle:: "+ request.getHeader("HTTP_SM_ROLES"));
 			
 		} catch (PolicyContextException e) {
@@ -75,7 +73,7 @@ public class CustomLoginModule extends AbstractServerLoginModule {
 
 		try {
 			this.callbackHandler.handle(callbacks);
-			name = ((NameCallback) callbacks[0]).getName().trim();
+			//name = ((NameCallback) callbacks[0]).getName().trim();
 			password = new String(((PasswordCallback) callbacks[1]).getPassword());
 
 			/*Object[] results = (Object[]) getQueryRunner().query(authSql, new Object[] { name, password },
@@ -85,7 +83,7 @@ public class CustomLoginModule extends AbstractServerLoginModule {
 			principal = new CustomPrincipal((String) results[0], (String) results[1],
 					((BigDecimal) results[2]).toString(), ((BigDecimal) results[3]).toString());*/
 
-			loginOk = true;
+			super.loginOk = true;
 
 		} catch (java.io.IOException ioe) {
 			ioe.printStackTrace();
@@ -96,12 +94,22 @@ public class CustomLoginModule extends AbstractServerLoginModule {
 		} /*catch (SQLException ex) {
 			ex.printStackTrace();
 		}*/
-		return false;
+		return true;
 	}
 
 	@Override
 	protected Principal getIdentity() {
-		return this.principal;
+		Principal identity = null;
+
+		try {
+			identity = super.createIdentity(name);
+
+		} catch (Throwable e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return identity;
+
 	}
 
 	@Override
@@ -111,14 +119,6 @@ public class CustomLoginModule extends AbstractServerLoginModule {
 		Group callerPrincipal = new SimpleGroup("CallerPrincipal");
 		Group[] groups = { roleGroup, callerPrincipal };
 
-		/*try {
-			Object[] grps = (Object[]) getQueryRunner().query(rolesSql, new Object[] { name }, new ArrayHandler());
-			for (int i = 0; i < grps.length; i++) {
-				roleGroup.addMember(new SimplePrincipal(((String) grps).trim()));
-			}
-		} catch (SQLException ex) {
-			ex.printStackTrace();
-		}*/
 		callerPrincipal.addMember(this.principal);
 		return groups;
 	}

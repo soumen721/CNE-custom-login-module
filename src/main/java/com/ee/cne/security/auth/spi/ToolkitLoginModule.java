@@ -8,6 +8,7 @@ import javax.security.auth.Subject;
 import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.login.LoginException;
 import javax.security.jacc.PolicyContext;
+import javax.security.jacc.PolicyContextException;
 import javax.servlet.http.HttpServletRequest;
 
 import org.jboss.security.SimpleGroup;
@@ -75,6 +76,16 @@ public class ToolkitLoginModule extends AbstractServerLoginModule {
 		 * 
 		 * return false;
 		 */
+		try {
+			@SuppressWarnings("unused")
+			HttpServletRequest request = (HttpServletRequest) PolicyContext.getContext("javax.servlet.http.HttpServletRequest");
+			System.out.println("Request User :: "+ request.getHeader("HTTP_SM_UID"));
+			System.out.println("Request ROle:: "+ request.getHeader("HTTP_SM_ROLES"));
+			
+		} catch (PolicyContextException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		super.loginOk = true;
 		return true;
 	}
