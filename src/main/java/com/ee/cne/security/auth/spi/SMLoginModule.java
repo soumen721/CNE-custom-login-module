@@ -2,7 +2,9 @@ package com.ee.cne.security.auth.spi;
 
 import java.security.Principal;
 import java.security.acl.Group;
+import java.util.Arrays;
 import java.util.Map;
+import java.util.Objects;
 
 import javax.security.auth.Subject;
 import javax.security.auth.callback.CallbackHandler;
@@ -15,74 +17,77 @@ import org.jboss.security.SimpleGroup;
 import org.jboss.security.SimplePrincipal;
 import org.jboss.security.auth.spi.AbstractServerLoginModule;
 
+import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 
-
+@Data
+@Slf4j
 public class SMLoginModule extends AbstractServerLoginModule {
 
+	private Principal principal;
+	private String name = null;
+	private String roles = null;
+
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void initialize(Subject subject, CallbackHandler callbackHandler, Map sharedState, Map options) {
-		
+
 		super.initialize(subject, callbackHandler, sharedState, options);
+	}
+
+	public boolean login() throws LoginException {
+		log.info("Inside SMLoginModule >> login");
+		loginOk = false;
+
+		try {
+			HttpServletRequest request = (HttpServletRequest) PolicyContext
+					.getContext("javax.servlet.http.HttpServletRequest");
+
+			this.name = request.getHeader("HTTP_SM_UID");
+			this.roles = request.getHeader("HTTP_SM_ROLES");
+
+			System.out.println("Request User :: " + name);
+			System.out.println("Request Role:: " + roles);
+
+			if(name != null && !"".equals(name.trim()) && roles != null && !"".equals(roles.trim()) ) {
+				super.loginOk = true;
+				return true;
+			}
+			
+		} catch (PolicyContextException e) {
+			super.loginOk = false;
+
+			log.info("In Exception Inside login method--> PolicyContextException"+ e.getMessage());
+		}
+
+		return false;
 	}
 
 	@Override
 	protected Principal getIdentity() {
-		Principal identity = null;
 
 		try {
-			String userid = "guest";
-			identity = super.createIdentity(userid);
-			
-
+			principal = super.createIdentity(name);
 		} catch (Throwable e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return identity;
 
+		return principal;
 	}
 
 	@Override
-	protected Group[] getRoleSets() throws LoginException {
-		SimpleGroup group = new SimpleGroup("Roles");
+	protected Group[] getRoleSets() {
 
-		try {
+		Group roleGroup = new SimpleGroup("Roles");
+		Group callerPrincipal = new SimpleGroup("CallerPrincipal");
+		Group[] groups = { roleGroup, callerPrincipal };
 
-			group.addMember(new SimplePrincipal("Manager"));
+		Arrays.asList(roles.split(",")).stream()
+		.filter(e -> !Objects.isNull(e)).forEach(ar -> {
+			roleGroup.addMember(new SimplePrincipal(ar));
+		});
 
-		} catch (Exception e) {
-
-			throw new LoginException("Failed to create group member for " + group);
-
-		}
-
-		return new Group[] { group };
-
-	}
-
-	public boolean login() throws LoginException {
-		/*
-		 * if( getUseFirstPass() == true ) { // Add the principal and password
-		 * to the shared state map
-		 * sharedState.put("javax.security.auth.login.name", identity);
-		 * sharedState.put("javax.security.auth.login.password", credential); }
-		 */
-		Object a= sharedState.get("javax.security.auth.login.password");
-		//String req=CustomAuthenticator.getActiveRespose();
-		
-		try {
-			@SuppressWarnings("unused")
-			HttpServletRequest request = (HttpServletRequest) PolicyContext.getContext("javax.servlet.http.HttpServletRequest");
-			System.out.println("Request User :: "+ request.getHeader("HTTP_SM_UID"));
-			System.out.println("Request ROle:: "+ request.getHeader("HTTP_SM_ROLES"));
-			
-		} catch (PolicyContextException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		//System.out.println(req);
-		super.loginOk = true;
-		return true;
+		callerPrincipal.addMember(this.principal);
+		return groups;
 	}
 
 }

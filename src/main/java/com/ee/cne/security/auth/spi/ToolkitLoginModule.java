@@ -2,7 +2,9 @@ package com.ee.cne.security.auth.spi;
 
 import java.security.Principal;
 import java.security.acl.Group;
+import java.util.Arrays;
 import java.util.Map;
+import java.util.Objects;
 
 import javax.security.auth.Subject;
 import javax.security.auth.callback.CallbackHandler;
@@ -21,91 +23,74 @@ public class ToolkitLoginModule extends AbstractServerLoginModule {
 
 	private static final String[] ALL_VALID_OPTIONS = { HEADER_USER_NAME, HEADER_ROLE };
 
+	private Principal principal;
+	private String name = null;
+	private String roles = null;
+
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void initialize(Subject subject, CallbackHandler callbackHandler, Map sharedState, Map options) {
 		addValidOptions(ALL_VALID_OPTIONS);
 
 		super.initialize(subject, callbackHandler, sharedState, options);
 	}
 
-	@Override
-	protected Principal getIdentity() {
+	public boolean login() throws LoginException {
+		log.info("Inside ToolkitLoginModule >> login");
+		super.loginOk = false;
+
 		try {
 			HttpServletRequest request = (HttpServletRequest) PolicyContext
 					.getContext("javax.servlet.http.HttpServletRequest");
 
-			String userid = "guest";
+			this.name = request.getHeader("HTTP_TK_UID");
+			this.roles = request.getHeader("HTTP_SM_ROLES");
+			String MSISDN = request.getHeader("HTTP_TK_MSISDN");
 
-			return super.createIdentity(userid);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return null;
+			System.out.println("Request User :: " + name);
+			System.out.println("Request Role:: " + roles);
+			System.out.println("Request MSISDN :: " + MSISDN);
 
-	}
+			if ((name != null && !"".equals(name.trim())) && (roles != null && !"".equals(roles.trim())) && (MSISDN != null
+					&& !"".equals(MSISDN.trim()))) {
 
-	@Override
-	protected Group[] getRoleSets() throws LoginException {
-		SimpleGroup group = new SimpleGroup("Roles");
+				super.loginOk = true;
+				return true;
+			}
 
-		try {
-
-			group.addMember(new SimplePrincipal("Manager"));
-
-		} catch (Exception e) {
-
-			throw new LoginException("Failed to create group member for " + group);
-
-		}
-
-		return new Group[] { group };
-
-	}
-
-	@Override
-	public boolean login() throws LoginException {
-		/*
-		 * //if the request header contains a user id value and the siteminder session
-		 * cookie is present. try { HttpServletRequest request = (HttpServletRequest)
-		 * PolicyContext.getContext("javax.servlet.http.HttpServletRequest");
-		 * if(request.getHeader("userID")!=null &&
-		 * request.getHeader("siteMinder")!=null){ super.loginOk=true; return true; }
-		 * 
-		 * } catch (Exception e) { // TODO Auto-generated catch block
-		 * e.printStackTrace(); }
-		 * 
-		 * return false;
-		 */
-		try {
-			@SuppressWarnings("unused")
-			HttpServletRequest request = (HttpServletRequest) PolicyContext.getContext("javax.servlet.http.HttpServletRequest");
-			System.out.println("Request User :: "+ request.getHeader("HTTP_SM_UID"));
-			System.out.println("Request ROle:: "+ request.getHeader("HTTP_SM_ROLES"));
-			
+			return true;
 		} catch (PolicyContextException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			super.loginOk = false;
+
+			log.info("In Exception Inside ToolkitLoginModule -login method--> PolicyContextException" + e.getMessage());
 		}
-		super.loginOk = true;
-		return true;
+
+		return false;
 	}
 
-	/*
-	 * @Override protected String getUsersPassword() throws LoginException {
-	 * System.out.format("MyLoginModule: authenticating user '%s'\n",
-	 * getUsername());
-	 * 
-	 * String password = super.getUsername();
-	 * 
-	 * password = password.toUpperCase();
-	 * 
-	 * return password; }
-	 * 
-	 * protected boolean validatePassword(String inputPassword, String
-	 * expectedPassword) {
-	 * 
-	 * return true;
-	 * 
-	 * }
-	 */
+	@Override
+	protected Principal getIdentity() {
+
+		try {
+			principal = super.createIdentity(name);
+		} catch (Throwable e) {
+			e.printStackTrace();
+		}
+
+		return principal;
+	}
+
+	@Override
+	protected Group[] getRoleSets() {
+
+		Group roleGroup = new SimpleGroup("Roles");
+		Group callerPrincipal = new SimpleGroup("CallerPrincipal");
+		Group[] groups = { roleGroup, callerPrincipal };
+
+		Arrays.asList(roles.split(",")).stream().filter(e -> !Objects.isNull(e)).forEach(ar -> {
+			roleGroup.addMember(new SimplePrincipal(ar));
+		});
+
+		callerPrincipal.addMember(this.principal);
+		return groups;
+	}
 }
