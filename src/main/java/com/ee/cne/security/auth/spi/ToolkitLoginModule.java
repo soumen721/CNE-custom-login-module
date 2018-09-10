@@ -42,9 +42,9 @@ public class ToolkitLoginModule extends AbstractServerLoginModule {
 			HttpServletRequest request = (HttpServletRequest) PolicyContext
 					.getContext("javax.servlet.http.HttpServletRequest");
 
-			this.name = request.getHeader("HTTP_TK_UID");
-			this.roles = request.getHeader("HTTP_SM_ROLES");
-			String MSISDN = request.getHeader("HTTP_TK_MSISDN");
+			this.name = request.getAttribute("HTTP_TK_UID").toString();
+			this.roles = request.getAttribute("HTTP_TK_ROLES").toString();
+			String MSISDN = request.getAttribute("HTTP_TK_MSISDN").toString();
 
 			System.out.println("Request User :: " + name);
 			System.out.println("Request Role:: " + roles);
