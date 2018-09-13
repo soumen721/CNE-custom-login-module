@@ -24,13 +24,17 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class SMLoginModule extends AbstractServerLoginModule {
 
+	private static final String HEADER_USER_NAME = "headerUserName";
+	private static final String HEADER_ROLE = "headerRole";
+	private static final String[] ALL_VALID_OPTIONS = { HEADER_USER_NAME, HEADER_ROLE };
+
 	private Principal principal;
 	private String name = null;
 	private String roles = null;
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void initialize(Subject subject, CallbackHandler callbackHandler, Map sharedState, Map options) {
-
+		addValidOptions(ALL_VALID_OPTIONS);
 		super.initialize(subject, callbackHandler, sharedState, options);
 	}
 
@@ -48,15 +52,15 @@ public class SMLoginModule extends AbstractServerLoginModule {
 			System.out.println("Request User :: " + name);
 			System.out.println("Request Role:: " + roles);
 
-			if(name != null && !"".equals(name.trim()) && roles != null && !"".equals(roles.trim()) ) {
+			if (name != null && !"".equals(name.trim()) && roles != null && !"".equals(roles.trim())) {
 				super.loginOk = true;
 				return true;
 			}
-			
+
 		} catch (PolicyContextException e) {
 			super.loginOk = false;
 
-			log.info("In Exception Inside login method--> PolicyContextException"+ e.getMessage());
+			log.info("In Exception Inside login method--> PolicyContextException" + e.getMessage());
 		}
 
 		return false;
@@ -81,8 +85,7 @@ public class SMLoginModule extends AbstractServerLoginModule {
 		Group callerPrincipal = new SimpleGroup("CallerPrincipal");
 		Group[] groups = { roleGroup, callerPrincipal };
 
-		Arrays.asList(roles.split(",")).stream()
-		.filter(e -> !Objects.isNull(e)).forEach(ar -> {
+		Arrays.asList(roles.split(",")).stream().filter(e -> !Objects.isNull(e)).forEach(ar -> {
 			roleGroup.addMember(new SimplePrincipal(ar));
 		});
 

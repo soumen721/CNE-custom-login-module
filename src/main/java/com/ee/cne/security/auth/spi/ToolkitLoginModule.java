@@ -20,7 +20,6 @@ import org.jboss.security.auth.spi.AbstractServerLoginModule;
 public class ToolkitLoginModule extends AbstractServerLoginModule {
 	private static final String HEADER_USER_NAME = "headerUserName";
 	private static final String HEADER_ROLE = "headerRole";
-
 	private static final String[] ALL_VALID_OPTIONS = { HEADER_USER_NAME, HEADER_ROLE };
 
 	private Principal principal;

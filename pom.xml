@@ -100,7 +100,7 @@
 									<mainClass>MainApp</mainClass>
 								</transformer -->
 							</transformers>
-							<outputDirectory>C:\Software\jboss-eap-6.4\modules\custom_module\main</outputDirectory>
+							<outputDirectory>C:\Software\jboss-eap-6.4\modules\com\ee\cne\security\main</outputDirectory>
 						</configuration>
 					</execution>
 				</executions>
