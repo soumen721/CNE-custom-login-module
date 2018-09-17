@@ -18,9 +18,11 @@ import org.jboss.security.SimplePrincipal;
 import org.jboss.security.auth.spi.AbstractServerLoginModule;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
 
 @Data
+@EqualsAndHashCode(callSuper=false)
 @Slf4j
 public class SMLoginModule extends AbstractServerLoginModule {
 

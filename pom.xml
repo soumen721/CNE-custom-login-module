@@ -95,15 +95,71 @@
 						</goals>
 						<configuration>
 							<transformers>
-								<!-- transformer
-									implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-									<mainClass>MainApp</mainClass>
-								</transformer -->
+								<!-- transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer"> 
+									<mainClass>MainApp</mainClass> </transformer -->
 							</transformers>
-							<outputDirectory>C:\Software\jboss-eap-6.4\modules\com\ee\cne\security\main</outputDirectory>
+							<outputDirectory>C:\Project_Software\Jboss-EAP\jboss-eap-6.4\modules\com\ee\cne\security\main</outputDirectory>
 						</configuration>
 					</execution>
 				</executions>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.cxf</groupId>
+				<artifactId>cxf-codegen-plugin</artifactId>
+				<version>2.2.2</version>
+				<executions>
+					<execution>
+						<id>generate-sources</id>
+						<phase>generate-sources</phase>
+						<configuration>
+							<sourceRoot>${project.build.directory}/generated-sources/cxf</sourceRoot>
+							<defaultOptions>
+								<extraargs>
+									<extraarg>--autoNameResolution</extraarg>
+									<extraarg>-impl</extraarg>
+									<extraarg>-verbose</extraarg>
+									<extraarg>-client</extraarg>
+									<extraarg>-xjc-XtoString</extraarg>
+									<extraarg>-xjc-Xequals</extraarg>
+									<extraarg>-xjc-XhashCode</extraarg>
+									<extraarg>-xjc-Xfluent-api</extraarg>
+									<extraarg>-xjc-Xvalue-constructor</extraarg>
+								</extraargs>
+
+							</defaultOptions>
+							<wsdlOptions>
+								<wsdlOption>
+									<wsdl>${basedir}/src/main/resources/wsdl/crm/customer/service/GetContextWithOperations/1.0/GetContextWithOperations.wsdl</wsdl>
+									<extraargs>
+										<extraarg>-p</extraarg>
+										<extraarg>com.ee.cne.ws.getctxwithoperations.generated</extraarg>
+									</extraargs>
+								</wsdlOption>
+							</wsdlOptions>
+						</configuration>
+						<goals>
+							<goal>wsdl2java</goal>
+						</goals>
+					</execution>
+				</executions>
+				<dependencies>
+					<dependency>
+						<groupId>org.jvnet.jaxb2_commons</groupId>
+						<artifactId>jaxb2-value-constructor</artifactId>
+						<version>3.0</version>
+					</dependency>
+					<dependency>
+						<groupId>org.jvnet.jaxb2_commons</groupId>
+						<artifactId>jaxb2-basics</artifactId>
+						<version>1.11.1</version>
+					</dependency>
+					<dependency>
+						<groupId>org.jvnet.jaxb2_commons</groupId>
+						<artifactId>jaxb2-fluent-api</artifactId>
+						<version>3.0</version>
+					</dependency>
+				</dependencies>
 			</plugin>
 
 		</plugins>

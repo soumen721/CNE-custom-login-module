@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<jaxb:bindings
+	xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
+	xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	xmlns:xjc="http://java.sun.com/xml/ns/jaxb/xjc"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:annox="http://annox.dev.java.net"
+	xmlns:tns="http://esb.tsf.ab.com/enterprise/message"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/jaxb http://java.sun.com/xml/ns/jaxb/bindingschema_2_0.xsd"
+	jaxb:extensionBindingPrefixes="xjc annox" version="2.1">
+
+	<jaxb:globalBindings>
+		<xjc:serializable uid="7702" />
+		<xjc:javaType
+			adapter="com.ee.cne.gui.adapter.LocalDateAdapter"
+			name="java.time.LocalDate" xmlType="xs:date" />
+	</jaxb:globalBindings>
+
+	<jaxb:bindings
+		schemaLocation="crm/customer/service/GetContextWithOperations/1.0/GetContextWithOperationsRequest.xsd"
+		node="/xs:schema">
+		<jaxb:bindings
+			node="//xs:complexType[@name='GetContextWithOperationsRequest']
+            /xs:complexContent/xs:extension[@base='req:Request']
+            /xs:sequence/xs:element[@name='message']
+            /xs:complexType">
+			<jaxb:property name="ReqMessage" />
+		</jaxb:bindings>
+	</jaxb:bindings>
+
+	<jaxb:bindings
+		schemaLocation="crm/customer/service/GetContextWithOperations/1.0/GetContextWithOperationsResponse.xsd"
+		node="/xs:schema">
+		<jaxb:bindings
+			node="//xs:complexType[@name='GetContextWithOperationsResponse']/xs:complexContent/xs:extension[@base='resp:Response']
+            /xs:sequence/xs:element[@name='message']/xs:complexType">
+			<jaxb:property name="RespMessage" />
+		</jaxb:bindings>
+	</jaxb:bindings>
+
+</jaxb:bindings>

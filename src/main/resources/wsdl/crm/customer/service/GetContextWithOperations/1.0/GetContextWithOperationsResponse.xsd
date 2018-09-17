@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema elementFormDefault="unqualified"
+    targetNamespace="http://www.everythingeverywhere.com/crm/customer/service/GetContextWithOperations/GetContextWithOperationsResponse/v1.0"
+    version="1.0" xmlns="http://www.w3.org/2001/XMLSchema"
+    xmlns:commdt="http://www.everythingeverywhere.com/common/datatype/DataTypes/v1.0"
+    xmlns:resp="http://www.everythingeverywhere.com/common/message/Response/v1.0" xmlns:tns="http://www.everythingeverywhere.com/crm/customer/service/GetContextWithOperations/GetContextWithOperationsResponse/v1.0">
+    <import
+        namespace="http://www.everythingeverywhere.com/common/message/Response/v1.0" schemaLocation="../../../../../common/message/1.0/Response.xsd">
+        <annotation>
+            <documentation> OUK Common Response Schema import</documentation>
+        </annotation>
+    </import>
+    <element name="getContextWithOperationsResponse" type="tns:GetContextWithOperationsResponse">
+        <annotation>
+            <documentation>Response object for service.</documentation>
+        </annotation>
+    </element>
+    <complexType name="GetContextWithOperationsResponse">
+        <complexContent>
+            <extension base="resp:Response">
+                <sequence>
+                    <element name="message">
+                        <complexType>
+							<sequence>
+                                <element minOccurs="1" name="contextFields" type="tns:contextFields" />
+                                <element minOccurs="0" name="operations" type="tns:operations" />
+                            </sequence>
+                        </complexType>
+                    </element>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+	<complexType name="operations">
+        <sequence>
+            <element maxOccurs="unbounded" minOccurs="0" name="operation"
+                type="string" />
+        </sequence>
+    </complexType>
+    <complexType name="contextFields">
+        <sequence>
+            <element maxOccurs="unbounded" minOccurs="1" name="contextField"
+                type="tns:contextField" />
+        </sequence>
+    </complexType>
+
+
+    <complexType name="contextField">
+        <sequence>
+            <element name="fieldName" minOccurs="1">
+                <simpleType>
+                    <restriction base="string">
+                        <minLength value="1"></minLength>
+                        <maxLength value="255"></maxLength>
+                    </restriction>
+                </simpleType>
+            </element>
+            <element name="fieldValue" nillable="true" type="string"
+                minOccurs="1">
+                <annotation>
+                    <documentation>
+                        Context field value of any type. If null value
+                        supplied then field will be removed from the
+                        context.
+                    </documentation>
+                </annotation>
+            </element>
+            <element minOccurs="1" name="fieldType">
+                <annotation>
+                    <documentation>
+                        Field type represents the type of the field.
+                    </documentation>
+                </annotation>
+                <simpleType>
+                    <restriction base="string">
+                        <enumeration value="String"></enumeration>
+                        <enumeration value="DateTime"></enumeration>
+                        <enumeration value="Int"></enumeration>
+                    </restriction>
+                </simpleType>
+            </element>
+        </sequence>
+    </complexType>	
+</schema>
