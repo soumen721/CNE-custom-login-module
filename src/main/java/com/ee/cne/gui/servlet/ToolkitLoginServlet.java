@@ -8,8 +8,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-//@WebServlet("/ToolkitLoginServlet")
-//@ServletSecurity(@HttpConstraint(rolesAllowed = { "cc-user", "ccl-user", "soc-user" }))
+import com.ee.cne.gui.util.PropertyReaderUtil;
+
 public class ToolkitLoginServlet extends HttpServlet {
 	/**
 	 * 
@@ -37,11 +37,11 @@ public class ToolkitLoginServlet extends HttpServlet {
 
 		request.getSession(true).invalidate();
 		// return response
-		String redirecURL = "http://localhost:8080/eea/redirectServlet?cId=cct1,svId=cc1;";
+		String redirecURL = PropertyReaderUtil.getProperties().getProperty("redirect.utl");
 		writer.println(htmlRespone);
 
 		if (MSISDN != null) {
-			redirecURL = "http://localhost:8080/eea/redirectServlet?cId=cct1,svId=cc1;choiceMSISDN,msisdn=" + MSISDN;
+			redirecURL = redirecURL+"choiceMSISDN,msisdn=" + MSISDN;
 		}
 
 		System.out.println("Redirected URL : " + redirecURL);

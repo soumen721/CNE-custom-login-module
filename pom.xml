@@ -25,35 +25,22 @@
 	<dependencies>
 
 		<dependency>
-			<groupId>javax.enterprise</groupId>
-			<artifactId>cdi-api</artifactId>
-			<scope>provided</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>org.jboss.spec.javax.annotation</groupId>
-			<artifactId>jboss-annotations-api_1.1_spec</artifactId>
-			<scope>provided</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>org.jboss.spec.javax.servlet</groupId>
-			<artifactId>jboss-servlet-api_3.0_spec</artifactId>
-			<scope>provided</scope>
-		</dependency>
-
-		<dependency>
 			<groupId>org.jboss.as</groupId>
 			<artifactId>jboss-as-web</artifactId>
 			<version>7.1.2.Final-redhat-1</version>
-			<scope>provided</scope>
+			<!-- <scope>provided</scope> -->
 		</dependency>
 
-		<dependency>
+		<!-- <dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
 			<version>1.18.0</version>
-			<scope>provided</scope>
+		</dependency> -->
+
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>javax.servlet-api</artifactId>
+			<version>3.1.0</version>
 		</dependency>
 
 	</dependencies>
