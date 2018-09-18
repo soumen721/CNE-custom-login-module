@@ -13,11 +13,15 @@ import javax.security.jacc.PolicyContext;
 import javax.security.jacc.PolicyContextException;
 import javax.servlet.http.HttpServletRequest;
 
+import org.jboss.logging.Logger;
 import org.jboss.security.SimpleGroup;
 import org.jboss.security.SimplePrincipal;
 import org.jboss.security.auth.spi.AbstractServerLoginModule;
 
 public class ToolkitLoginModule extends AbstractServerLoginModule {
+	
+	private static final Logger log = Logger.getLogger(ToolkitLoginModule.class);
+	
 	private static final String HEADER_USER_NAME = "headerUserName";
 	private static final String HEADER_ROLE = "headerRole";
 	private static final String[] ALL_VALID_OPTIONS = { HEADER_USER_NAME, HEADER_ROLE };
@@ -34,7 +38,7 @@ public class ToolkitLoginModule extends AbstractServerLoginModule {
 	}
 
 	public boolean login() throws LoginException {
-		log.info("Inside ToolkitLoginModule >> login");
+		log.debug("Inside ToolkitLoginModule >> login");
 		super.loginOk = false;
 
 		try {
@@ -45,9 +49,9 @@ public class ToolkitLoginModule extends AbstractServerLoginModule {
 			this.roles = request.getAttribute("HTTP_TK_ROLES").toString();
 			String MSISDN = request.getAttribute("HTTP_TK_MSISDN").toString();
 
-			System.out.println("Request User :: " + name);
-			System.out.println("Request Role:: " + roles);
-			System.out.println("Request MSISDN :: " + MSISDN);
+			log.debug("Request User :: " + name);
+			log.debug("Request Role:: " + roles);
+			log.debug("Request MSISDN :: " + MSISDN);
 
 			if ((name != null && !"".equals(name.trim())) && (roles != null && !"".equals(roles.trim())) && (MSISDN != null
 					&& !"".equals(MSISDN.trim()))) {

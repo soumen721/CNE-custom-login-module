@@ -8,19 +8,20 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.ee.cne.gui.util.PropertyReaderUtil;
+import org.jboss.logging.Logger;
+
+import com.ee.cne.util.PropertyReaderUtil;
 
 public class ToolkitLoginServlet extends HttpServlet {
-	/**
-	 * 
-	 */
+	
 	private static final long serialVersionUID = 1L;
-
+	private static final Logger log = Logger.getLogger(ToolkitLoginServlet.class);
+	
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		String id = request.getParameter("context");
-		System.out.println(id);
+		log.debug(id);
 
 		PrintWriter writer = response.getWriter();
 
@@ -44,7 +45,7 @@ public class ToolkitLoginServlet extends HttpServlet {
 			redirecURL = redirecURL+"choiceMSISDN,msisdn=" + MSISDN;
 		}
 
-		System.out.println("Redirected URL : " + redirecURL);
+		log.debug("Redirected URL : " + redirecURL);
 		response.sendRedirect(redirecURL);
 	}
 

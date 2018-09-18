@@ -4,7 +4,7 @@ import java.net.MalformedURLException;
 import java.util.Arrays;
 import java.util.UUID;
 
-import org.apache.catalina.connector.Request;
+import org.jboss.logging.Logger;
 
 import com.ee.cne.ws.getctxwithoperations.generated.BusinessFault;
 import com.ee.cne.ws.getctxwithoperations.generated.ContextField;
@@ -16,13 +16,11 @@ import com.ee.cne.ws.getctxwithoperations.generated.GetContextWithOperationsResp
 import com.ee.cne.ws.getctxwithoperations.generated.ObjectFactory;
 import com.ee.cne.ws.getctxwithoperations.generated.Operations;
 
-import lombok.extern.slf4j.Slf4j;
-
-@Slf4j
 public class GetCtxWithOperationsClient {
+	private static final Logger log = Logger.getLogger(GetCtxWithOperationsClient.class);
 	
 	// TODO remove this method one actual web service implentation is ready
-	public static ToolkitLoginInfo fetchToolkitAuthenticationDetails(Request request) throws MalformedURLException {
+	public static ToolkitLoginInfo fetchToolkitAuthenticationDetails(String contextKeyParamName) throws MalformedURLException {
 
 		// call web-service
 		ToolkitLoginInfo toolkitLoginInfo = null;
@@ -32,13 +30,13 @@ public class GetCtxWithOperationsClient {
 
 		// Set the request parameters
 		Message message = new Message();
-		message.setContextToken("ABCDXYZ");
+		message.setContextToken(contextKeyParamName);
 		serviceRequest.setMessage(message);
 
 		EIMessageContext2 messageContext = new EIMessageContext2();
 		messageContext.setCorrelationId(correlationId);
 		messageContext.setRequestId(correlationId);
-		messageContext.setSender("EEA-JBOSS");
+		messageContext.setSender("EEA-JBOSS");	//TODO 	need actual sender name
 
 		try {
 

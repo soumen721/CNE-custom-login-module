@@ -13,19 +13,17 @@ import javax.security.jacc.PolicyContext;
 import javax.security.jacc.PolicyContextException;
 import javax.servlet.http.HttpServletRequest;
 
+import org.jboss.logging.Logger;
 import org.jboss.security.SimpleGroup;
 import org.jboss.security.SimplePrincipal;
 import org.jboss.security.auth.spi.AbstractServerLoginModule;
 
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.extern.slf4j.Slf4j;
+import com.ee.cne.gui.authentication.SMToolkitAuthenticator;
 
-@Data
-@EqualsAndHashCode(callSuper=false)
-@Slf4j
+
 public class SMLoginModule extends AbstractServerLoginModule {
-
+	private static final Logger log = Logger.getLogger(SMToolkitAuthenticator.class);
+	
 	private static final String HEADER_USER_NAME = "headerUserName";
 	private static final String HEADER_ROLE = "headerRole";
 	private static final String[] ALL_VALID_OPTIONS = { HEADER_USER_NAME, HEADER_ROLE };
@@ -41,7 +39,7 @@ public class SMLoginModule extends AbstractServerLoginModule {
 	}
 
 	public boolean login() throws LoginException {
-		log.info("Inside SMLoginModule >> login");
+		log.debug("Inside SMLoginModule >> login");
 		loginOk = false;
 
 		try {
@@ -51,8 +49,8 @@ public class SMLoginModule extends AbstractServerLoginModule {
 			this.name = request.getHeader("HTTP_SM_UID");
 			this.roles = request.getHeader("HTTP_SM_ROLES");
 
-			System.out.println("Request User :: " + name);
-			System.out.println("Request Role:: " + roles);
+			log.debug("Request User :: " + name);
+			log.debug("Request Role:: " + roles);
 
 			if (name != null && !"".equals(name.trim()) && roles != null && !"".equals(roles.trim())) {
 				super.loginOk = true;
@@ -62,7 +60,7 @@ public class SMLoginModule extends AbstractServerLoginModule {
 		} catch (PolicyContextException e) {
 			super.loginOk = false;
 
-			log.info("In Exception Inside login method--> PolicyContextException" + e.getMessage());
+			log.error("In Exception Inside login method--> PolicyContextException" + e.getMessage());
 		}
 
 		return false;
