@@ -17,7 +17,7 @@ public class PropertyReaderUtil {
 			input = PropertyReaderUtil.class.getClassLoader().getResourceAsStream("config.properties");
 			prop.load(input);
 			// get the property value and print it out
-			log.debug("Redirect URL:: "+ prop.getProperty("redirect.utl"));
+			log.debug("Redirect URL:: "+ prop.getProperty("redirect.url"));
 
 		} catch (IOException ex) {
 
