@@ -17,6 +17,7 @@ import org.apache.catalina.connector.Request;
 import org.apache.catalina.deploy.LoginConfig;
 import org.jboss.logging.Logger;
 
+import com.ee.cne.gui.LoginTypeEnum;
 import com.ee.cne.ws.getctxwithoperations.client.GetCtxWithOperationsClient;
 import com.ee.cne.ws.getctxwithoperations.client.ToolkitLoginInfo;
 
@@ -40,6 +41,7 @@ public class SMToolkitAuthenticator extends AuthenticatorBase {
 		try {
 			String userName = null;
 			String password = null;
+			LoginTypeEnum loginType = null;
 			Principal principal = request.getUserPrincipal();
 
 			if (principal != null) {
@@ -62,15 +64,18 @@ public class SMToolkitAuthenticator extends AuthenticatorBase {
 
 				userName = httpHeaderForSSOAuth;
 				password = "";
+				loginType = LoginTypeEnum.SM_LOGIN;
 			} else if (httpHeaderToolkitUserId != null && !"".equals(httpHeaderToolkitUserId.trim())) {
 
 				userName = httpHeaderToolkitUserId;
 				password = "";
+				loginType = LoginTypeEnum.TOOLKIT_LOGIN;
 			}
 			if(userName == null || "".equals(userName)) {
 				throw new Exception("User Id can not be null or blank");
 			}
 
+			request.setAttribute("LOGIN_TYPE", loginType);
 			final Realm realm = context.getRealm();
 			principal = realm.authenticate(userName, password);
 

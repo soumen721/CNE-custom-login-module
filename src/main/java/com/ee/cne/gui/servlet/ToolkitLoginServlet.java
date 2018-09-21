@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.jboss.logging.Logger;
 
-import com.ee.cne.util.PropertyReaderUtil;
+import com.ee.cne.util.LoginUtil;
 
 public class ToolkitLoginServlet extends HttpServlet {
 	
@@ -38,7 +38,7 @@ public class ToolkitLoginServlet extends HttpServlet {
 
 		request.getSession(true).invalidate();
 		// return response
-		String redirecURL = PropertyReaderUtil.getProperties().getProperty("redirect.utl");
+		String redirecURL = LoginUtil.getProperties().getProperty("redirect.url");
 		writer.println(htmlRespone);
 
 		if (MSISDN != null) {

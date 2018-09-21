@@ -2,9 +2,7 @@ package com.ee.cne.security.auth.spi;
 
 import java.security.Principal;
 import java.security.acl.Group;
-import java.util.Arrays;
 import java.util.Map;
-import java.util.Objects;
 
 import javax.security.auth.Subject;
 import javax.security.auth.callback.CallbackHandler;
@@ -14,9 +12,10 @@ import javax.security.jacc.PolicyContextException;
 import javax.servlet.http.HttpServletRequest;
 
 import org.jboss.logging.Logger;
-import org.jboss.security.SimpleGroup;
-import org.jboss.security.SimplePrincipal;
 import org.jboss.security.auth.spi.AbstractServerLoginModule;
+
+import com.ee.cne.gui.LoginTypeEnum;
+import com.ee.cne.util.LoginUtil;
 
 public class ToolkitLoginModule extends AbstractServerLoginModule {
 	
@@ -27,8 +26,8 @@ public class ToolkitLoginModule extends AbstractServerLoginModule {
 	private static final String[] ALL_VALID_OPTIONS = { HEADER_USER_NAME, HEADER_ROLE };
 
 	private Principal principal;
-	private String name = null;
-	private String roles = null;
+	private String userName = null;
+	private String userRoles = null;
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void initialize(Subject subject, CallbackHandler callbackHandler, Map sharedState, Map options) {
@@ -44,23 +43,25 @@ public class ToolkitLoginModule extends AbstractServerLoginModule {
 		try {
 			HttpServletRequest request = (HttpServletRequest) PolicyContext
 					.getContext("javax.servlet.http.HttpServletRequest");
+			
+			if(LoginTypeEnum.TOOLKIT_LOGIN != LoginTypeEnum.valueOf(request.getAttribute("LOGIN_TYPE").toString())) {
+				return false;
+			}
+			
+			this.userName = request.getAttribute("HTTP_TK_UID").toString();
+			this.userRoles = request.getAttribute("HTTP_TK_ROLES").toString();
+			final String MSISDN = request.getAttribute("HTTP_TK_MSISDN").toString();
 
-			this.name = request.getAttribute("HTTP_TK_UID").toString();
-			this.roles = request.getAttribute("HTTP_TK_ROLES").toString();
-			String MSISDN = request.getAttribute("HTTP_TK_MSISDN").toString();
-
-			log.debug("Request User :: " + name);
-			log.debug("Request Role:: " + roles);
+			log.debug("Request User :: " + userName);
+			log.debug("Request Role:: " + userRoles);
 			log.debug("Request MSISDN :: " + MSISDN);
 
-			if ((name != null && !"".equals(name.trim())) && (roles != null && !"".equals(roles.trim())) && (MSISDN != null
-					&& !"".equals(MSISDN.trim()))) {
+			if ((userName != null && !"".equals(userName.trim())) && (userRoles != null && !"".equals(userRoles.trim())) ) {
 
 				super.loginOk = true;
 				return true;
 			}
 
-			return true;
 		} catch (PolicyContextException e) {
 			super.loginOk = false;
 
@@ -74,7 +75,7 @@ public class ToolkitLoginModule extends AbstractServerLoginModule {
 	protected Principal getIdentity() {
 
 		try {
-			principal = super.createIdentity(name);
+			principal = super.createIdentity(userName);
 		} catch (Throwable e) {
 			e.printStackTrace();
 		}
@@ -85,15 +86,6 @@ public class ToolkitLoginModule extends AbstractServerLoginModule {
 	@Override
 	protected Group[] getRoleSets() {
 
-		Group roleGroup = new SimpleGroup("Roles");
-		Group callerPrincipal = new SimpleGroup("CallerPrincipal");
-		Group[] groups = { roleGroup, callerPrincipal };
-
-		Arrays.asList(roles.split(",")).stream().filter(e -> !Objects.isNull(e)).forEach(ar -> {
-			roleGroup.addMember(new SimplePrincipal(ar));
-		});
-
-		callerPrincipal.addMember(this.principal);
-		return groups;
+		return LoginUtil.getGroups(this.principal, userRoles);
 	}
 }

@@ -2,9 +2,7 @@ package com.ee.cne.security.auth.spi;
 
 import java.security.Principal;
 import java.security.acl.Group;
-import java.util.Arrays;
 import java.util.Map;
-import java.util.Objects;
 
 import javax.security.auth.Subject;
 import javax.security.auth.callback.CallbackHandler;
@@ -14,23 +12,22 @@ import javax.security.jacc.PolicyContextException;
 import javax.servlet.http.HttpServletRequest;
 
 import org.jboss.logging.Logger;
-import org.jboss.security.SimpleGroup;
-import org.jboss.security.SimplePrincipal;
 import org.jboss.security.auth.spi.AbstractServerLoginModule;
 
-import com.ee.cne.gui.authentication.SMToolkitAuthenticator;
+import com.ee.cne.gui.LoginTypeEnum;
+import com.ee.cne.util.LoginUtil;
 
 
 public class SMLoginModule extends AbstractServerLoginModule {
-	private static final Logger log = Logger.getLogger(SMToolkitAuthenticator.class);
+	private static final Logger log = Logger.getLogger(SMLoginModule.class);
 	
 	private static final String HEADER_USER_NAME = "headerUserName";
 	private static final String HEADER_ROLE = "headerRole";
 	private static final String[] ALL_VALID_OPTIONS = { HEADER_USER_NAME, HEADER_ROLE };
 
 	private Principal principal;
-	private String name = null;
-	private String roles = null;
+	private String userName = null;
+	private String userRoles = null;
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void initialize(Subject subject, CallbackHandler callbackHandler, Map sharedState, Map options) {
@@ -40,23 +37,27 @@ public class SMLoginModule extends AbstractServerLoginModule {
 
 	public boolean login() throws LoginException {
 		log.debug("Inside SMLoginModule >> login");
-		loginOk = false;
-
+		super.loginOk = false;
+		
 		try {
 			HttpServletRequest request = (HttpServletRequest) PolicyContext
 					.getContext("javax.servlet.http.HttpServletRequest");
+			
+			if(LoginTypeEnum.SM_LOGIN != LoginTypeEnum.valueOf(request.getAttribute("LOGIN_TYPE").toString())) {
+				return false;
+			}
+			
+			this.userName = request.getHeader("HTTP_SM_UID");
+			this.userRoles = request.getHeader("HTTP_SM_ROLES");
 
-			this.name = request.getHeader("HTTP_SM_UID");
-			this.roles = request.getHeader("HTTP_SM_ROLES");
+			log.debug("Request User :: " + userName);
+			log.debug("Request Role:: " + userRoles);
 
-			log.debug("Request User :: " + name);
-			log.debug("Request Role:: " + roles);
-
-			if (name != null && !"".equals(name.trim()) && roles != null && !"".equals(roles.trim())) {
+			if (userName != null && !"".equals(userName.trim()) && userRoles != null && !"".equals(userRoles.trim())) {
+				
 				super.loginOk = true;
 				return true;
 			}
-
 		} catch (PolicyContextException e) {
 			super.loginOk = false;
 
@@ -70,7 +71,7 @@ public class SMLoginModule extends AbstractServerLoginModule {
 	protected Principal getIdentity() {
 
 		try {
-			principal = super.createIdentity(name);
+			principal = super.createIdentity(userName);
 		} catch (Throwable e) {
 			e.printStackTrace();
 		}
@@ -81,16 +82,7 @@ public class SMLoginModule extends AbstractServerLoginModule {
 	@Override
 	protected Group[] getRoleSets() {
 
-		Group roleGroup = new SimpleGroup("Roles");
-		Group callerPrincipal = new SimpleGroup("CallerPrincipal");
-		Group[] groups = { roleGroup, callerPrincipal };
-
-		Arrays.asList(roles.split(",")).stream().filter(e -> !Objects.isNull(e)).forEach(ar -> {
-			roleGroup.addMember(new SimplePrincipal(ar));
-		});
-
-		callerPrincipal.addMember(this.principal);
-		return groups;
+		return LoginUtil.getGroups(this.principal, userRoles);
 	}
 
 }

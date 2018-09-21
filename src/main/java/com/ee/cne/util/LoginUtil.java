@@ -1,0 +1,58 @@
+package com.ee.cne.util;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.security.Principal;
+import java.security.acl.Group;
+import java.util.Arrays;
+import java.util.Objects;
+import java.util.Properties;
+
+import org.jboss.logging.Logger;
+import org.jboss.security.SimpleGroup;
+import org.jboss.security.SimplePrincipal;
+
+public class LoginUtil {
+	private static final Logger log = Logger.getLogger(LoginUtil.class);
+	
+	public static Properties getProperties() {
+		Properties prop = new Properties();
+		InputStream input = null;
+		try {
+
+			input = LoginUtil.class.getClassLoader().getResourceAsStream("config.properties");
+			prop.load(input);
+			// get the property value and print it out
+			log.debug("Redirect URL:: "+ prop.getProperty("redirect.url"));
+
+		} catch (IOException ex) {
+
+			ex.printStackTrace();
+		} finally {
+			if (input != null) {
+				try {
+					input.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		return prop;
+	}
+	
+	public static Group[] getGroups(Principal principal ,final String roles) {
+		
+		Group roleGroup = new SimpleGroup("Roles");
+		Group callerPrincipal = new SimpleGroup("CallerPrincipal");
+		Group[] groups = { roleGroup, callerPrincipal };
+
+		Arrays.asList(roles.split(",")).stream().filter(e -> !Objects.isNull(e)).forEach(ar -> {
+			roleGroup.addMember(new SimplePrincipal(ar));
+		});
+
+		callerPrincipal.addMember(principal);
+		
+		return groups;
+	}
+
+}
