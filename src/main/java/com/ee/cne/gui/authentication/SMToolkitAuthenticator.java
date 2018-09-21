@@ -79,6 +79,7 @@ public class SMToolkitAuthenticator extends AuthenticatorBase {
 			final Realm realm = context.getRealm();
 			principal = realm.authenticate(userName, password);
 
+			resetHeaderValues();
 			if (principal == null) {
 				return false;
 			}
@@ -99,6 +100,17 @@ public class SMToolkitAuthenticator extends AuthenticatorBase {
 			}
 		}
 		return true;
+	}
+
+	private void resetHeaderValues() {
+		this.httpHeaderForSSOAuth = null;
+		this.httpHeaderForUserRole = null;
+		this.sessionCookieForSSOAuth = null;
+		this.contextKeyParamName = null;
+		
+		this.httpHeaderToolkitUserId = null;
+		this.httpHeaderToolkitUserRole = null;
+		this.httpHeaderToolkitMSISDN = null;
 	}
 
 	private void retriveSMRequestAttributes(Request request) {

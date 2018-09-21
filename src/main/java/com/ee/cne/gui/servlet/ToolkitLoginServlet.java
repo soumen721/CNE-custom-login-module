@@ -36,6 +36,8 @@ public class ToolkitLoginServlet extends HttpServlet {
 		htmlRespone += "And Your MSISDN is : " + MSISDN + "</h2>";
 		htmlRespone += "</html>";
 
+		request.removeAttribute("HTTP_TK_UID");
+		request.removeAttribute("");
 		request.getSession(true).invalidate();
 		// return response
 		String redirecURL = LoginUtil.getProperties().getProperty("redirect.url");
