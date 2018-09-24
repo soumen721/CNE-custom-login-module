@@ -18,9 +18,9 @@ import com.ee.cne.gui.LoginTypeEnum;
 import com.ee.cne.util.LoginUtil;
 
 public class ToolkitLoginModule extends AbstractServerLoginModule {
-	
+
 	private static final Logger log = Logger.getLogger(ToolkitLoginModule.class);
-	
+
 	private static final String HEADER_USER_NAME = "headerUserName";
 	private static final String HEADER_ROLE = "headerRole";
 	private static final String[] ALL_VALID_OPTIONS = { HEADER_USER_NAME, HEADER_ROLE };
@@ -43,20 +43,25 @@ public class ToolkitLoginModule extends AbstractServerLoginModule {
 		try {
 			HttpServletRequest request = (HttpServletRequest) PolicyContext
 					.getContext("javax.servlet.http.HttpServletRequest");
-			
-			if(LoginTypeEnum.TOOLKIT_LOGIN != LoginTypeEnum.valueOf(request.getAttribute("LOGIN_TYPE").toString())) {
+
+			if (LoginTypeEnum.TOOLKIT_LOGIN != LoginTypeEnum.valueOf(request.getAttribute("LOGIN_TYPE").toString())) {
 				return false;
 			}
-			
+
 			this.userName = request.getAttribute("HTTP_TK_UID").toString();
-			this.userRoles = request.getAttribute("HTTP_TK_ROLES").toString();
-			final String MSISDN = request.getAttribute("HTTP_TK_MSISDN").toString();
+			this.userRoles = request.getAttribute("HTTP_TK_ROLES") != null
+					? request.getAttribute("HTTP_TK_ROLES").toString()
+					: null;
+			final String MSISDN = request.getAttribute("HTTP_TK_MSISDN") != null
+					? request.getAttribute("HTTP_TK_MSISDN").toString()
+					: null;
 
 			log.debug("Request User :: " + userName);
 			log.debug("Request Role:: " + userRoles);
 			log.debug("Request MSISDN :: " + MSISDN);
 
-			if ((userName != null && !"".equals(userName.trim())) && (userRoles != null && !"".equals(userRoles.trim())) ) {
+			if ((userName != null && !"".equals(userName.trim()))
+					&& (userRoles != null && !"".equals(userRoles.trim()))) {
 
 				super.loginOk = true;
 				return true;
