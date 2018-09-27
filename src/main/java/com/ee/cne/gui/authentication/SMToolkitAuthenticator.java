@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.security.Principal;
 import java.util.stream.Collectors;
 
+import javax.servlet.RequestDispatcher;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -33,12 +34,11 @@ public class SMToolkitAuthenticator extends AuthenticatorBase {
 	private String httpHeaderToolkitMSISDN = null;
 
 	@Override
-	protected boolean authenticate(Request request, HttpServletResponse response, LoginConfig config)
-			throws IOException {
+	public boolean authenticate(Request request, HttpServletResponse response, LoginConfig config) throws IOException {
 
 		try {
 			String userName = null;
-			String password = null;
+			String password = "";
 			LoginTypeEnum loginType = null;
 			Principal principal = request.getUserPrincipal();
 
@@ -56,24 +56,24 @@ public class SMToolkitAuthenticator extends AuthenticatorBase {
 				ToolkitLoginInfo toolkitLoginInfo = GetCtxWithOperationsClient
 						.fetchToolkitAuthenticationDetails(contextKeyParamName);
 				populateToolkitRequestAttributes(request, toolkitLoginInfo);
-			} else if ((httpHeaderForSSOAuth == null || "".equals(httpHeaderForSSOAuth.trim()))
-					|| (contextKeyParamName != null && !"".equals(contextKeyParamName.trim()))){
-				
+			}
+
+			if ((httpHeaderForSSOAuth == null || "".equals(httpHeaderForSSOAuth.trim()))
+					&& (contextKeyParamName != null || !"".equals(contextKeyParamName.trim()))) {
+
 				throw new Exception("SM user ID and ContextParam both can not be null");
 			}
 
 			if (httpHeaderForSSOAuth != null && !"".equals(httpHeaderForSSOAuth)) {
 
 				userName = httpHeaderForSSOAuth;
-				password = "";
 				loginType = LoginTypeEnum.SM_LOGIN;
 			} else if (httpHeaderToolkitUserId != null && !"".equals(httpHeaderToolkitUserId.trim())) {
 
 				userName = httpHeaderToolkitUserId;
-				password = "";
 				loginType = LoginTypeEnum.TOOLKIT_LOGIN;
 			}
-			if(userName == null || "".equals(userName)) {
+			if (userName == null || "".equals(userName)) {
 				throw new Exception("User Id can not be null or blank");
 			}
 
@@ -93,12 +93,26 @@ public class SMToolkitAuthenticator extends AuthenticatorBase {
 
 			register(request, response, principal, HttpServletRequest.FORM_AUTH, userName, password);
 		} catch (Exception exc) {
-				log.error("Exception details :: "+ exc.getMessage());
-				//response.sendRedirect("errorServle1");
-				System.out.println("ERRORRRRRR11RR");
+
+			log.error("Exception details :: " + exc.getMessage());
+			request.setAttribute(RequestDispatcher.ERROR_EXCEPTION, exc);
+			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, exc.getMessage());
 		}
-		
+
 		return true;
+	}
+
+	protected void forwardToErrorPage(Request request, HttpServletResponse response, LoginConfig config)
+			throws IOException {
+		RequestDispatcher disp = context.getServletContext().getRequestDispatcher(config.getLoginPage());
+		try {
+			disp.forward(request.getRequest(), response);
+		} catch (Exception exc) {
+			String msg = exc.getMessage();
+			log.warn(msg, exc);
+			request.setAttribute(RequestDispatcher.ERROR_EXCEPTION, exc);
+			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, msg);
+		}
 	}
 
 	private void resetHeaderValues() {
@@ -106,7 +120,7 @@ public class SMToolkitAuthenticator extends AuthenticatorBase {
 		this.httpHeaderForUserRole = null;
 		this.sessionCookieForSSOAuth = null;
 		this.contextKeyParamName = null;
-		
+
 		this.httpHeaderToolkitUserId = null;
 		this.httpHeaderToolkitUserRole = null;
 		this.httpHeaderToolkitMSISDN = null;
