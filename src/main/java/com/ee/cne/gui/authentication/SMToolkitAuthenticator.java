@@ -59,7 +59,7 @@ public class SMToolkitAuthenticator extends AuthenticatorBase {
 			}
 
 			if ((httpHeaderForSSOAuth == null || "".equals(httpHeaderForSSOAuth.trim()))
-					&& (contextKeyParamName != null || !"".equals(contextKeyParamName.trim()))) {
+					&& (contextKeyParamName == null || "".equals(contextKeyParamName.trim()))) {
 
 				throw new Exception("SM user ID and ContextParam both can not be null");
 			}
