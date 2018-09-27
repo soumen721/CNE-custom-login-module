@@ -40,7 +40,7 @@ public class ToolkitLoginServlet extends HttpServlet {
 		request.removeAttribute("");
 		request.getSession(true).invalidate();
 		// return response
-		String redirecURL = LoginUtil.getProperties().getProperty("redirect.url");
+		String redirecURL = LoginUtil.getProperties().getProperty(LoginUtil.TOOLKIT_REDIRECT_URL);
 		writer.println(htmlRespone);
 
 		if (MSISDN != null) {

@@ -14,6 +14,8 @@ import org.jboss.security.SimplePrincipal;
 
 public class LoginUtil {
 	private static final Logger log = Logger.getLogger(LoginUtil.class);
+	public static final String TOOLKIT_REDIRECT_URL = "toolkit.redirect.url";
+	public static final String TOOLKIT_WS_URL = "toolkit.ws.url";
 	
 	public static Properties getProperties() {
 		Properties prop = new Properties();
@@ -23,10 +25,9 @@ public class LoginUtil {
 			input = LoginUtil.class.getClassLoader().getResourceAsStream("config.properties");
 			prop.load(input);
 			// get the property value and print it out
-			log.debug("Redirect URL:: "+ prop.getProperty("redirect.url"));
-
+			log.debug("Redirect URL:: "+ prop.getProperty(TOOLKIT_REDIRECT_URL));
 		} catch (IOException ex) {
-
+			log.error("Exception in retriving value from property file ::"+ ex.getMessage());
 			ex.printStackTrace();
 		} finally {
 			if (input != null) {

@@ -4,8 +4,6 @@ import java.io.IOException;
 import java.security.Principal;
 import java.util.stream.Collectors;
 
-import javax.servlet.RequestDispatcher;
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -90,14 +88,10 @@ public class SMToolkitAuthenticator extends AuthenticatorBase {
 			request.setUserPrincipal(principal);
 
 			register(request, response, principal, HttpServletRequest.FORM_AUTH, userName, password);
-		} catch (Exception e) {
-			log.error("Exception :: " + e.getMessage());
-			try {
-				RequestDispatcher rd=request.getRequestDispatcher("eea");  
-				rd.forward(request, response);
-			} catch (ServletException e1) {
-				e1.printStackTrace();
-			}
+			
+		} catch (Exception exc) {
+				log.error("Exception details :: "+ exc.getMessage());
+				throw new IOException("Excel");
 		}
 		return true;
 	}
