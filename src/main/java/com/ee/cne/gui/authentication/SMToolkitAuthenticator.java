@@ -56,6 +56,10 @@ public class SMToolkitAuthenticator extends AuthenticatorBase {
 				ToolkitLoginInfo toolkitLoginInfo = GetCtxWithOperationsClient
 						.fetchToolkitAuthenticationDetails(contextKeyParamName);
 				populateToolkitRequestAttributes(request, toolkitLoginInfo);
+			} else if ((httpHeaderForSSOAuth == null || "".equals(httpHeaderForSSOAuth.trim()))
+					|| (contextKeyParamName != null && !"".equals(contextKeyParamName.trim()))){
+				
+				throw new Exception("SM user ID and ContextParam both can not be null");
 			}
 
 			if (httpHeaderForSSOAuth != null && !"".equals(httpHeaderForSSOAuth)) {
