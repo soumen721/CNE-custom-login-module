@@ -88,11 +88,12 @@ public class SMToolkitAuthenticator extends AuthenticatorBase {
 			request.setUserPrincipal(principal);
 
 			register(request, response, principal, HttpServletRequest.FORM_AUTH, userName, password);
-			
 		} catch (Exception exc) {
 				log.error("Exception details :: "+ exc.getMessage());
-				throw new IOException("Excel");
+				//response.sendRedirect("errorServle1");
+				System.out.println("ERRORRRRRR11RR");
 		}
+		
 		return true;
 	}
 

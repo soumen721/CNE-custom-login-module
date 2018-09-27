@@ -29,6 +29,16 @@
 			<artifactId>jboss-as-web</artifactId>
 			<version>7.1.2.Final-redhat-1</version>
 			<!-- <scope>provided</scope> -->
+			<exclusions>
+				<exclusion>
+					<groupId>org.jboss.spec.javax.servlet</groupId>
+					<artifactId>jboss-servlet-api_3.0_spec</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.jboss.spec.javax.servlet.jsp</groupId>
+					<artifactId>jboss-jsp-api_2.2_spec</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 
 		<dependency>
