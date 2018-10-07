@@ -49,10 +49,7 @@ public class ToolkitHeaderInjectHandler implements SOAPHandler<SOAPMessageContex
 				 * ))));
 				 */
 
-				SOAPElement security = soapHeader.addChildElement("Security", "wsse",
-						"http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd");
-
-				SOAPElement trackingHeader = security.addChildElement("trackingHeader", "v1");
+				SOAPElement trackingHeader = soapEnv.addChildElement("trackingHeader", "v1");
 				// usernameToken.addAttribute(new QName("xmlns:wsu"),
 				// "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd");
 
@@ -82,7 +79,7 @@ public class ToolkitHeaderInjectHandler implements SOAPHandler<SOAPMessageContex
 				SOAPElement password = trackingHeader.addChildElement("timestamp");
 				password.addTextNode(LoginUtil.toXMLCalender(LocalDateTime.now(ZoneId.of("UTC"))).toString());
 
-				// Printing Header 
+				// Printing Header
 				soapMsg.writeTo(System.out);
 
 			} catch (SOAPException | IOException | DatatypeConfigurationException e) {
