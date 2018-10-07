@@ -14,7 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.jboss.logging.Logger;
 import org.jboss.security.auth.spi.AbstractServerLoginModule;
 
-import com.ee.cne.gui.LoginTypeEnum;
+import com.ee.cne.util.LoginTypeEnum;
 import com.ee.cne.util.LoginUtil;
 
 

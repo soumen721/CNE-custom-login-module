@@ -1,4 +1,4 @@
-package com.ee.cne.gui;
+package com.ee.cne.util;
 
 public enum LoginTypeEnum {
 

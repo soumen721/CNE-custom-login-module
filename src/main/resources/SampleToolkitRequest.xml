@@ -1,0 +1,23 @@
+<soapenv:Envelope
+	xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
+	xmlns:v1="http://www.everythingeverywhere.com/common/message/SoapHeader/v1.0"
+	xmlns:v11="http://www.everythingeverywhere.com/crm/customer/service/GetContextWithOperations/GetContextWithOperationsRequest/v1.0"
+	xmlns:dat="http://messaging.ei.tmobile.net/datatypes">
+	<soapenv:Header>
+		<v1:trackingHeader>
+			<requestId>12332455553345</requestId>
+			<timestamp>2018-12-28T19:51:14+00:00</timestamp>
+		</v1:trackingHeader>
+	</soapenv:Header>
+	<soapenv:Body>
+		<v11:getContextWithOperations>
+			<eiMessageContext2>
+				<dat:sender>recycle-and-reward</dat:sender>
+				<dat:correlationId>12332455553345</dat:correlationId>
+			</eiMessageContext2>
+			<message>
+				<contextToken>R4WKACCR5L5MSD5K6P5VZ2U6RQJ3DT5F</contextToken>
+			</message>
+		</v11:getContextWithOperations>
+	</soapenv:Body>
+</soapenv:Envelope>

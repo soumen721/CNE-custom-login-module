@@ -4,9 +4,16 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.security.Principal;
 import java.security.acl.Group;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Arrays;
+import java.util.GregorianCalendar;
 import java.util.Objects;
 import java.util.Properties;
+
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.jboss.logging.Logger;
 import org.jboss.security.SimpleGroup;
@@ -40,6 +47,13 @@ public class LoginUtil {
 		}
 		return prop;
 	}
+	
+	public static XMLGregorianCalendar toXMLCalender(LocalDateTime date) throws DatatypeConfigurationException {
+
+        GregorianCalendar gcal = GregorianCalendar.from(date.atZone(ZoneId.systemDefault()));
+        return DatatypeFactory.newInstance().newXMLGregorianCalendar(gcal);
+    }
+
 	
 	public static Group[] getGroups(Principal principal ,final String roles) {
 		

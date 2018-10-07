@@ -16,7 +16,7 @@ import org.apache.catalina.connector.Request;
 import org.apache.catalina.deploy.LoginConfig;
 import org.jboss.logging.Logger;
 
-import com.ee.cne.gui.LoginTypeEnum;
+import com.ee.cne.util.LoginTypeEnum;
 import com.ee.cne.ws.getctxwithoperations.client.GetCtxWithOperationsClient;
 import com.ee.cne.ws.getctxwithoperations.client.ToolkitLoginInfo;
 
