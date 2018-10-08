@@ -14,14 +14,11 @@ import com.ee.cne.ws.getctxwithoperations.generated.BusinessFault;
 import com.ee.cne.ws.getctxwithoperations.generated.ContextField;
 import com.ee.cne.ws.getctxwithoperations.generated.ContextFields;
 import com.ee.cne.ws.getctxwithoperations.generated.EIMessageContext2;
-import com.ee.cne.ws.getctxwithoperations.generated.GetContextWithOperations;
 import com.ee.cne.ws.getctxwithoperations.generated.GetContextWithOperationsRequest;
 import com.ee.cne.ws.getctxwithoperations.generated.GetContextWithOperationsRequest.Message;
 import com.ee.cne.ws.getctxwithoperations.generated.GetContextWithOperationsResponse;
-import com.ee.cne.ws.getctxwithoperations.generated.GetContextWithOperationsService;
 import com.ee.cne.ws.getctxwithoperations.generated.ObjectFactory;
 import com.ee.cne.ws.getctxwithoperations.generated.Operations;
-import com.ee.cne.ws.getctxwithoperations.generated.TechnicalFault;
 
 public class GetCtxWithOperationsClient {
 	private static final Logger log = Logger.getLogger(GetCtxWithOperationsClient.class);
@@ -52,9 +49,9 @@ public class GetCtxWithOperationsClient {
 
 			URL wsdlURL = new URL(LoginUtil.getProperties().getProperty(LoginUtil.TOOLKIT_WS_URL));
 			log.info("WSDL URL :: "+ wsdlURL.getHost()+"/"+ wsdlURL.getPath());
-			GetContextWithOperationsService service = new GetContextWithOperationsService(wsdlURL);
-			GetContextWithOperations ctxport = service.getGetContextWithOperations10();
-			serviceResponse = ctxport.getContextWithOperations(serviceRequest);
+			//GetContextWithOperationsService service = new GetContextWithOperationsService(wsdlURL);
+			//GetContextWithOperations ctxport = service.getGetContextWithOperations10();
+			//serviceResponse = ctxport.getContextWithOperations(serviceRequest);
 
 			if (serviceResponse != null && serviceResponse.getMessage() != null) {
 				toolkitLoginInfo = new ToolkitLoginInfo();
@@ -85,15 +82,8 @@ public class GetCtxWithOperationsClient {
 		} catch (BusinessFault bex) {
 
 			log.error("An error occured while calling service getGetContextWithOperations", bex);
-		} /*
-			 * catch (TechnicalFault tex) {
-			 * 
-			 * // logr.error("An error occured while calling service //
-			 * getGetContextWithOperations", tex); }
-			 */ catch (TechnicalFault e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
+		} 
+		
 		return toolkitLoginInfo;
 
 	}

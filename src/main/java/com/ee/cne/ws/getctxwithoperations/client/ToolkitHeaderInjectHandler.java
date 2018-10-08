@@ -1,12 +1,9 @@
 package com.ee.cne.ws.getctxwithoperations.client;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.Iterator;
 import java.util.Set;
 
-import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.namespace.QName;
 import javax.xml.soap.SOAPBody;
 import javax.xml.soap.SOAPBodyElement;
@@ -21,8 +18,6 @@ import javax.xml.ws.handler.soap.SOAPMessageContext;
 
 import org.jboss.logging.Logger;
 
-import com.ee.cne.util.LoginUtil;
-
 public class ToolkitHeaderInjectHandler implements SOAPHandler<SOAPMessageContext> {
 	private static final Logger log = Logger.getLogger(ToolkitHeaderInjectHandler.class);
 
@@ -31,10 +26,10 @@ public class ToolkitHeaderInjectHandler implements SOAPHandler<SOAPMessageContex
 
 		System.out.println("Client : handleMessage()......");
 		Boolean isRequest = (Boolean) context.get(MessageContext.MESSAGE_OUTBOUND_PROPERTY);
-		if (isRequest) {
 
-			try {
-				SOAPMessage soapMsg = context.getMessage();
+		try {
+			SOAPMessage soapMsg = context.getMessage();
+			if (isRequest) {
 				SOAPEnvelope soapEnv = soapMsg.getSOAPPart().getEnvelope();
 				SOAPHeader soapHeader = soapEnv.getHeader();
 
@@ -42,12 +37,6 @@ public class ToolkitHeaderInjectHandler implements SOAPHandler<SOAPMessageContex
 				if (soapHeader == null) {
 					soapHeader = soapEnv.addHeader();
 				}
-				/*
-				 * TrackingHeader header = new TrackingHeader();
-				 * header.setRequestId(correlationId);
-				 * header.setTimestamp(LoginUtil.toXMLCalender(LocalDateTime.now(ZoneId.of("UTC"
-				 * ))));
-				 */
 
 				SOAPElement trackingHeader = soapEnv.addChildElement("trackingHeader", "v1");
 				// usernameToken.addAttribute(new QName("xmlns:wsu"),
@@ -77,15 +66,14 @@ public class ToolkitHeaderInjectHandler implements SOAPHandler<SOAPMessageContex
 				username.addTextNode(requestId);
 
 				SOAPElement password = trackingHeader.addChildElement("timestamp");
-				password.addTextNode(LoginUtil.toXMLCalender(LocalDateTime.now(ZoneId.of("UTC"))).toString());
+				password.addTextNode("");
 
-				// Printing Header
-				soapMsg.writeTo(System.out);
-
-			} catch (SOAPException | IOException | DatatypeConfigurationException e) {
-				log.error("Error ::" + e.getMessage());
 			}
-
+			
+			// Printing Request/Response
+			soapMsg.writeTo(System.out);
+		} catch (SOAPException | IOException e) {
+			log.error("Exception :: " + e.getMessage());
 		}
 
 		return true;
