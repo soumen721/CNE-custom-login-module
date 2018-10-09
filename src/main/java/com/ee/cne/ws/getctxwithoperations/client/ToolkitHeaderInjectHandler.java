@@ -1,9 +1,15 @@
 package com.ee.cne.ws.getctxwithoperations.client;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.GregorianCalendar;
 import java.util.Iterator;
 import java.util.Set;
 
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.XMLGregorianCalendar;
 import javax.xml.namespace.QName;
 import javax.xml.soap.SOAPBody;
 import javax.xml.soap.SOAPBodyElement;
@@ -38,9 +44,7 @@ public class ToolkitHeaderInjectHandler implements SOAPHandler<SOAPMessageContex
 					soapHeader = soapEnv.addHeader();
 				}
 
-				SOAPElement trackingHeader = soapEnv.addChildElement("trackingHeader", "v1");
-				// usernameToken.addAttribute(new QName("xmlns:wsu"),
-				// "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd");
+				SOAPElement trackingHeader = soapHeader.addChildElement("trackingHeader", "v1");
 
 				SOAPBody soapBody = soapEnv.getBody();
 				@SuppressWarnings("unchecked")
@@ -49,30 +53,33 @@ public class ToolkitHeaderInjectHandler implements SOAPHandler<SOAPMessageContex
 				String requestId = null;
 				while (elements.hasNext()) {
 					SOAPBodyElement element = elements.next();
-
+					System.out.println("Param Name " + element.getNodeValue());
 					@SuppressWarnings("unchecked")
 					Iterator<SOAPBodyElement> params = element.getChildElements();
 
 					while (params.hasNext()) {
 						SOAPBodyElement param = params.next();
-
+						System.out.println(
+								"Param Name Inner " + element.getNodeValue() + " Node Value : " + param.getValue());
 						if ("correlationId".equals(param.getNodeName())) {
 							requestId = param.getNodeValue();
 						}
 					}
 				}
 
-				SOAPElement username = trackingHeader.addChildElement("requestId");
-				username.addTextNode(requestId);
+				SOAPElement requestIdNode = trackingHeader.addChildElement("requestId");
+				requestIdNode.addTextNode(requestId);
 
-				SOAPElement password = trackingHeader.addChildElement("timestamp");
-				password.addTextNode("");
+				GregorianCalendar gcal = GregorianCalendar.from(LocalDateTime.now().atZone(ZoneId.systemDefault()));
+				XMLGregorianCalendar dateTimeNow = DatatypeFactory.newInstance().newXMLGregorianCalendar(gcal);
+				SOAPElement timestampNode = trackingHeader.addChildElement("timestamp");
+				timestampNode.addTextNode(dateTimeNow.toString());
 
 			}
-			
+
 			// Printing Request/Response
 			soapMsg.writeTo(System.out);
-		} catch (SOAPException | IOException e) {
+		} catch (SOAPException | IOException | DatatypeConfigurationException e) {
 			log.error("Exception :: " + e.getMessage());
 		}
 

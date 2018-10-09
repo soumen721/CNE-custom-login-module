@@ -9,23 +9,25 @@ import java.util.UUID;
 
 import org.jboss.logging.Logger;
 
-import com.ee.cne.util.LoginUtil;
 import com.ee.cne.ws.getctxwithoperations.generated.BusinessFault;
 import com.ee.cne.ws.getctxwithoperations.generated.ContextField;
 import com.ee.cne.ws.getctxwithoperations.generated.ContextFields;
 import com.ee.cne.ws.getctxwithoperations.generated.EIMessageContext2;
+import com.ee.cne.ws.getctxwithoperations.generated.GetContextWithOperations;
 import com.ee.cne.ws.getctxwithoperations.generated.GetContextWithOperationsRequest;
 import com.ee.cne.ws.getctxwithoperations.generated.GetContextWithOperationsRequest.Message;
 import com.ee.cne.ws.getctxwithoperations.generated.GetContextWithOperationsResponse;
+import com.ee.cne.ws.getctxwithoperations.generated.GetContextWithOperationsService;
 import com.ee.cne.ws.getctxwithoperations.generated.ObjectFactory;
 import com.ee.cne.ws.getctxwithoperations.generated.Operations;
+import com.ee.cne.ws.getctxwithoperations.generated.TechnicalFault;
 
 public class GetCtxWithOperationsClient {
 	private static final Logger log = Logger.getLogger(GetCtxWithOperationsClient.class);
 
 	// TODO remove this method one actual web service implementation is ready
 	public static ToolkitLoginInfo fetchToolkitAuthenticationDetails(String contextKeyParamName)
-			throws MalformedURLException {
+			throws MalformedURLException, TechnicalFault {
 
 		// call web-service
 		ToolkitLoginInfo toolkitLoginInfo = null;
@@ -41,17 +43,18 @@ public class GetCtxWithOperationsClient {
 		EIMessageContext2 messageContext = new EIMessageContext2();
 		messageContext.setCorrelationId(correlationId);
 		messageContext.setRequestId(correlationId);
-		messageContext.setSender("EEA-JBOSS"); // TODO need actual sender name
+		messageContext.setSender("EEA-JBOSS"); 
+		serviceRequest.setEiMessageContext2(messageContext);
 
 		try {
 
 			serviceResponse = populateDummyResponse();
 
-			URL wsdlURL = new URL(LoginUtil.getProperties().getProperty(LoginUtil.TOOLKIT_WS_URL));
+			URL wsdlURL = new URL("http://localhost:8081/service/getContextWithOperations-1_0?wsdl");
 			log.info("WSDL URL :: "+ wsdlURL.getHost()+"/"+ wsdlURL.getPath());
-			//GetContextWithOperationsService service = new GetContextWithOperationsService(wsdlURL);
-			//GetContextWithOperations ctxport = service.getGetContextWithOperations10();
-			//serviceResponse = ctxport.getContextWithOperations(serviceRequest);
+			GetContextWithOperationsService service = new GetContextWithOperationsService(wsdlURL);
+			GetContextWithOperations ctxport = service.getGetContextWithOperations10();
+			serviceResponse = ctxport.getContextWithOperations(serviceRequest);
 
 			if (serviceResponse != null && serviceResponse.getMessage() != null) {
 				toolkitLoginInfo = new ToolkitLoginInfo();
