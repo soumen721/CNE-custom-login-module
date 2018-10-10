@@ -17,10 +17,9 @@ import org.jboss.security.auth.spi.AbstractServerLoginModule;
 import com.ee.cne.util.LoginTypeEnum;
 import com.ee.cne.util.LoginUtil;
 
-
 public class SMLoginModule extends AbstractServerLoginModule {
 	private static final Logger log = Logger.getLogger(SMLoginModule.class);
-	
+
 	private static final String HEADER_USER_NAME = "headerUserName";
 	private static final String HEADER_ROLE = "headerRole";
 	private static final String[] ALL_VALID_OPTIONS = { HEADER_USER_NAME, HEADER_ROLE };
@@ -36,25 +35,24 @@ public class SMLoginModule extends AbstractServerLoginModule {
 	}
 
 	public boolean login() throws LoginException {
-		log.debug("Inside SMLoginModule >> login");
+		log.info("Inside SMLoginModule >> login");
 		super.loginOk = false;
-		
+
 		try {
 			HttpServletRequest request = (HttpServletRequest) PolicyContext
 					.getContext("javax.servlet.http.HttpServletRequest");
-			
-			if(LoginTypeEnum.SM_LOGIN != LoginTypeEnum.valueOf(request.getAttribute("LOGIN_TYPE").toString())) {
+
+			if (LoginTypeEnum.SM_LOGIN != LoginTypeEnum.valueOf(request.getAttribute("LOGIN_TYPE").toString())) {
 				return false;
 			}
-			
+
 			this.userName = request.getHeader("HTTP_SM_UID");
 			this.userRoles = request.getHeader("HTTP_SM_ROLES");
 
-			log.debug("Request User :: " + userName);
-			log.debug("Request Role:: " + userRoles);
+			log.info("Request User : " + userName + "\t|Request Role : " + userRoles);
 
 			if (userName != null && !"".equals(userName.trim()) && userRoles != null && !"".equals(userRoles.trim())) {
-				
+
 				super.loginOk = true;
 				return true;
 			}

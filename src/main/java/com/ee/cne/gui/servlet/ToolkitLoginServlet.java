@@ -21,7 +21,7 @@ public class ToolkitLoginServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		String id = request.getParameter("context");
-		log.debug(id);
+		log.info(id);
 
 		PrintWriter writer = response.getWriter();
 
@@ -47,7 +47,7 @@ public class ToolkitLoginServlet extends HttpServlet {
 			redirecURL = redirecURL+"choiceMSISDN,msisdn=" + MSISDN;
 		}
 
-		log.debug("Redirected URL : " + redirecURL);
+		log.info("Redirected URL : " + redirecURL);
 		response.sendRedirect(redirecURL);
 	}
 

@@ -37,7 +37,7 @@ public class ToolkitLoginModule extends AbstractServerLoginModule {
 	}
 
 	public boolean login() throws LoginException {
-		log.debug("Inside ToolkitLoginModule >> login");
+		log.info("Inside ToolkitLoginModule >> login");
 		super.loginOk = false;
 
 		try {
@@ -56,9 +56,7 @@ public class ToolkitLoginModule extends AbstractServerLoginModule {
 					? request.getAttribute("HTTP_TK_MSISDN").toString()
 					: null;
 
-			log.debug("Request User :: " + userName);
-			log.debug("Request Role:: " + userRoles);
-			log.debug("Request MSISDN :: " + MSISDN);
+			log.info("Request User : " + userName + "\t|Request Role : " + userRoles + "\t|Request MSISDN : " + MSISDN);
 
 			if ((userName != null && !"".equals(userName.trim()))
 					&& (userRoles != null && !"".equals(userRoles.trim()))) {

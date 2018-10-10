@@ -1,5 +1,6 @@
 package com.ee.cne.ws.getctxwithoperations.client;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -22,6 +23,9 @@ import javax.xml.ws.handler.soap.SOAPHandler;
 import javax.xml.ws.handler.soap.SOAPMessageContext;
 
 import org.jboss.logging.Logger;
+import org.w3c.dom.Document;
+
+import com.ee.cne.util.LoginUtil;
 
 public class ToolkitHeaderInjectHandler implements SOAPHandler<SOAPMessageContext> {
 	private static final Logger log = Logger.getLogger(ToolkitHeaderInjectHandler.class);
@@ -60,15 +64,19 @@ public class ToolkitHeaderInjectHandler implements SOAPHandler<SOAPMessageContex
 				timestampNode.setValue(dateTimeNow.toString());
 
 				soapMsg.saveChanges();
-				System.out.println("\n\n************* VALUE :: " + node.getChildNodes().item(0).getNodeValue());
-
-			}
-
-			// Printing Request/Response
-			soapMsg.writeTo(System.out);
-			System.out.println("\n");
+				
+				Document xmlDoc = LoginUtil.toXmlDocument(soapMessageToString(soapMsg));
+				log.info("Request :: \n"+ LoginUtil.prettyPrintXML(xmlDoc));
+			} else {
+				Document xmlDoc = LoginUtil.toXmlDocument(soapMessageToString(soapMsg));
+				log.info("Response :: \n"+ LoginUtil.prettyPrintXML(xmlDoc));
+			}System.out.println("\n");
 		} catch (SOAPException | IOException | DatatypeConfigurationException e) {
 			log.error("Exception adding SOAP Header :: " + e.getMessage());
+			//throw new Exception(e);
+		} catch (Exception e) {
+			log.error("Exception adding SOAP Header :: " + e.getMessage());
+			//throw e;
 		}
 
 		return true;
@@ -92,4 +100,26 @@ public class ToolkitHeaderInjectHandler implements SOAPHandler<SOAPMessageContex
 		return null;
 	}
 
+	public String soapMessageToString(SOAPMessage message) throws Exception {
+		String result = null;
+
+		if (message != null) {
+			ByteArrayOutputStream baos = null;
+			try {
+				baos = new ByteArrayOutputStream();
+				message.writeTo(baos);
+				result = baos.toString();
+			} catch (IOException e) {
+				throw e;
+			} finally {
+				if (baos != null) {
+					try {
+						baos.close();
+					} catch (IOException ioe) {
+					}
+				}
+			}
+		}
+		return result;
+	}
 }

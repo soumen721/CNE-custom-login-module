@@ -32,7 +32,7 @@ public class GetCtxWithOperationsClient {
 
 		ToolkitLoginInfo toolkitLoginInfo = null;
 		try {
-			String correlationId = UUID.randomUUID().toString();
+			String correlationId = UUID.randomUUID().toString().toUpperCase();
 			GetContextWithOperationsResponse serviceResponse = null;
 			GetContextWithOperationsRequest serviceRequest = new ObjectFactory()
 					.createGetContextWithOperationsRequest();

@@ -73,7 +73,7 @@ public class SMToolkitAuthenticator extends AuthenticatorBase {
 				userName = httpHeaderToolkitUserId;
 				loginType = LoginTypeEnum.TOOLKIT_LOGIN;
 			}
-			log.debug("Login Type :: " + loginType);
+			log.info("Login Type :: " + loginType);
 			if (userName == null || "".equals(userName)) {
 				throw new Exception("User Id can not be null or blank");
 			}
@@ -133,7 +133,7 @@ public class SMToolkitAuthenticator extends AuthenticatorBase {
 		this.httpHeaderForUserRole = request.getHeader("HTTP_SM_ROLES");
 		this.sessionCookieForSSOAuth = request.getHeader("SMSESSION");
 		this.contextKeyParamName = request.getParameter("context");
-		log.debug("SM USER ID :" + httpHeaderForSSOAuth + "\tcontextKeyParamName : " + contextKeyParamName);
+		log.info("SM USER ID :" + httpHeaderForSSOAuth + "\t|contextKeyParamName : " + contextKeyParamName);
 	}
 
 	private void populateToolkitRequestAttributes(Request request, ToolkitLoginInfo toolkitLoginInfo) {
