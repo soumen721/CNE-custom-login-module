@@ -29,7 +29,7 @@ public class ToolkitHeaderInjectHandler implements SOAPHandler<SOAPMessageContex
 	@Override
 	public boolean handleMessage(SOAPMessageContext context) {
 
-		System.out.println("Client : handleMessage()......");
+		log.info("Client : handleMessage()......");
 		Boolean isRequest = (Boolean) context.get(MessageContext.MESSAGE_OUTBOUND_PROPERTY);
 
 		try {
@@ -43,8 +43,9 @@ public class ToolkitHeaderInjectHandler implements SOAPHandler<SOAPMessageContex
 					soapHeader = soapEnv.addHeader();
 				}
 
-				SOAPElement trackingHeader = soapHeader.addChildElement(soapEnv.createName("trackingHeader", "ns7",
-						"http://www.everythingeverywhere.com/common/message/SoapHeader/v1.0"));
+				QName bodyName = new QName("http://www.everythingeverywhere.com/common/message/SoapHeader/v1.0",
+						"trackingHeader");
+				SOAPElement trackingHeader = soapHeader.addChildElement(bodyName);
 
 				Node node = (Node) soapBody
 						.getElementsByTagNameNS("http://messaging.ei.tmobile.net/datatypes", "requestId").item(0);
@@ -63,7 +64,9 @@ public class ToolkitHeaderInjectHandler implements SOAPHandler<SOAPMessageContex
 
 			}
 
+			// Printing Request/Response
 			soapMsg.writeTo(System.out);
+			System.out.println("\n");
 		} catch (SOAPException | IOException | DatatypeConfigurationException e) {
 			log.error("Exception adding SOAP Header :: " + e.getMessage());
 		}
