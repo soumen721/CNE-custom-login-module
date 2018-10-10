@@ -10,6 +10,7 @@ import java.util.UUID;
 
 import org.jboss.logging.Logger;
 
+import com.ee.cne.util.LoginUtil;
 import com.ee.cne.ws.getctxwithoperations.generated.BusinessFault;
 import com.ee.cne.ws.getctxwithoperations.generated.ContextField;
 import com.ee.cne.ws.getctxwithoperations.generated.ContextFields;
@@ -26,32 +27,29 @@ import com.ee.cne.ws.getctxwithoperations.generated.TechnicalFault;
 public class GetCtxWithOperationsClient {
 	private static final Logger log = Logger.getLogger(GetCtxWithOperationsClient.class);
 
-	// TODO remove this method one actual web service implementation is ready
 	public static ToolkitLoginInfo fetchToolkitAuthenticationDetails(String contextKeyParamName)
 			throws MalformedURLException {
 
-		// call web-service
 		ToolkitLoginInfo toolkitLoginInfo = null;
-		String correlationId = UUID.randomUUID().toString();
-		GetContextWithOperationsResponse serviceResponse = null;
-		GetContextWithOperationsRequest serviceRequest = new ObjectFactory().createGetContextWithOperationsRequest();
-
-		// Set the request parameters
-		Message message = new Message();
-		message.setContextToken(contextKeyParamName);
-		serviceRequest.setMessage(message);
-
-		EIMessageContext2 messageContext = new EIMessageContext2();
-		messageContext.setCorrelationId(correlationId);
-		messageContext.setRequestId(correlationId);
-		messageContext.setSender("EEA-JBOSS");
-		serviceRequest.setEiMessageContext2(messageContext);
-
 		try {
+			String correlationId = UUID.randomUUID().toString();
+			GetContextWithOperationsResponse serviceResponse = null;
+			GetContextWithOperationsRequest serviceRequest = new ObjectFactory()
+					.createGetContextWithOperationsRequest();
 
+			// Set the request parameters
+			Message message = new Message();
+			message.setContextToken(contextKeyParamName);
+			serviceRequest.setMessage(message);
+
+			EIMessageContext2 messageContext = new EIMessageContext2();
+			messageContext.setCorrelationId(correlationId);
+			messageContext.setRequestId(correlationId);
+			messageContext.setSender("EEA-JBOSS");
+			serviceRequest.setEiMessageContext2(messageContext);
 			serviceResponse = populateDummyResponse();
 
-			URL wsdlURL = new URL("http://localhost:8081/mockGetContextWithOperationsSoapBinding?WSDL");
+			URL wsdlURL = new URL(LoginUtil.getProperties().getProperty(LoginUtil.TOOLKIT_WS_URL));
 			log.info("WSDL URL :: " + wsdlURL.toURI().toString());
 			GetContextWithOperationsService service = new GetContextWithOperationsService(wsdlURL);
 			GetContextWithOperations ctxport = service.getGetContextWithOperations10();
@@ -86,6 +84,8 @@ public class GetCtxWithOperationsClient {
 		} catch (BusinessFault | TechnicalFault | URISyntaxException exc) {
 
 			log.error("An error occured while calling service getGetContextWithOperations", exc);
+		} catch (Exception e2) {
+			log.error("An error occured while calling service getGetContextWithOperations", e2);
 		}
 
 		return toolkitLoginInfo;
