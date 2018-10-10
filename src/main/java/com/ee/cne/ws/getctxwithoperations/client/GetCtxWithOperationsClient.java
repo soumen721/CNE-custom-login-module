@@ -1,6 +1,7 @@
 package com.ee.cne.ws.getctxwithoperations.client;
 
 import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
@@ -27,7 +28,7 @@ public class GetCtxWithOperationsClient {
 
 	// TODO remove this method one actual web service implementation is ready
 	public static ToolkitLoginInfo fetchToolkitAuthenticationDetails(String contextKeyParamName)
-			throws MalformedURLException, TechnicalFault {
+			throws MalformedURLException {
 
 		// call web-service
 		ToolkitLoginInfo toolkitLoginInfo = null;
@@ -43,15 +44,15 @@ public class GetCtxWithOperationsClient {
 		EIMessageContext2 messageContext = new EIMessageContext2();
 		messageContext.setCorrelationId(correlationId);
 		messageContext.setRequestId(correlationId);
-		messageContext.setSender("EEA-JBOSS"); 
+		messageContext.setSender("EEA-JBOSS");
 		serviceRequest.setEiMessageContext2(messageContext);
 
 		try {
 
 			serviceResponse = populateDummyResponse();
 
-			URL wsdlURL = new URL("http://localhost:8081/service/getContextWithOperations-1_0?wsdl");
-			log.info("WSDL URL :: "+ wsdlURL.getHost()+"/"+ wsdlURL.getPath());
+			URL wsdlURL = new URL("http://localhost:8081/mockGetContextWithOperationsSoapBinding?WSDL");
+			log.info("WSDL URL :: " + wsdlURL.toURI().toString());
 			GetContextWithOperationsService service = new GetContextWithOperationsService(wsdlURL);
 			GetContextWithOperations ctxport = service.getGetContextWithOperations10();
 			serviceResponse = ctxport.getContextWithOperations(serviceRequest);
@@ -82,13 +83,12 @@ public class GetCtxWithOperationsClient {
 				throw new BusinessFault("No valid Response Found");
 			}
 
-		} catch (BusinessFault bex) {
+		} catch (BusinessFault | TechnicalFault | URISyntaxException exc) {
 
-			log.error("An error occured while calling service getGetContextWithOperations", bex);
-		} 
-		
+			log.error("An error occured while calling service getGetContextWithOperations", exc);
+		}
+
 		return toolkitLoginInfo;
-
 	}
 
 	public static GetContextWithOperationsResponse populateDummyResponse() {
