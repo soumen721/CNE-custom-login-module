@@ -140,8 +140,8 @@ public class SMToolkitAuthenticator extends AuthenticatorBase {
 	private void populateToolkitRequestAttributes(Request request, ToolkitLoginInfo toolkitLoginInfo) {
 
 		this.httpHeaderToolkitUserId = toolkitLoginInfo.getUid();
-		this.httpHeaderToolkitUserRole = toolkitLoginInfo.getRoleList().stream().map(e -> e.toString())
-				.collect(Collectors.joining(","));
+		this.httpHeaderToolkitUserRole = toolkitLoginInfo.getRoleList() != null ? toolkitLoginInfo.getRoleList().stream().map(e -> e.toString())
+				.collect(Collectors.joining(",")) : null;
 		this.httpHeaderToolkitMSISDN = toolkitLoginInfo.getMsisdn();
 
 		request.setAttribute("HTTP_TK_UID", httpHeaderToolkitUserId);

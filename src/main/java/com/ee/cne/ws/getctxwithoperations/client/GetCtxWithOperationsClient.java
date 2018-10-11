@@ -22,7 +22,8 @@ import com.ee.cne.ws.getctxwithoperations.generated.TechnicalFault;
 public class GetCtxWithOperationsClient {
 	private static final Logger log = Logger.getLogger(GetCtxWithOperationsClient.class);
 
-	public static ToolkitLoginInfo fetchToolkitAuthenticationDetails(String contextKeyParamName) throws AuthenticationException {
+	public static ToolkitLoginInfo fetchToolkitAuthenticationDetails(String contextKeyParamName)
+			throws AuthenticationException {
 
 		ToolkitLoginInfo toolkitLoginInfo = null;
 		try {
@@ -55,18 +56,17 @@ public class GetCtxWithOperationsClient {
 						&& serviceResponse.getMessage().getContextFields().getContextField() != null) {
 
 					ContextField uId = serviceResponse.getMessage().getContextFields().getContextField().stream()
-							.filter(e -> "user.username".equals(e.getFieldName())).findFirst().orElseGet(null);
+							.filter(e -> "user.username".equals(e.getFieldName())).findFirst().orElse(null);
 
 					ContextField msisdn = serviceResponse.getMessage().getContextFields().getContextField().stream()
 							.filter(e -> "customer.customerDetails.msisdn".equals(e.getFieldName())).findFirst()
-							.orElseGet(null);
+							.orElse(null);
 
-					toolkitLoginInfo.setUid(uId.getFieldValue());
-					toolkitLoginInfo.setMsisdn(msisdn.getFieldValue());
+					toolkitLoginInfo.setUid(uId != null ? uId.getFieldValue() : null);
+					toolkitLoginInfo.setMsisdn(msisdn != null ? msisdn.getFieldValue() : null);
 				}
 
-				if (serviceResponse.getMessage().getContextFields() != null
-						&& serviceResponse.getMessage().getContextFields().getContextField() != null) {
+				if (serviceResponse.getMessage() != null && serviceResponse.getMessage().getOperations() != null) {
 
 					toolkitLoginInfo.setRoleList(serviceResponse.getMessage().getOperations().getOperation());
 				}
