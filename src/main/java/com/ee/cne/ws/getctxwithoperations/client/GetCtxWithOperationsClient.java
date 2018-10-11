@@ -3,9 +3,6 @@ package com.ee.cne.ws.getctxwithoperations.client;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Random;
 import java.util.UUID;
 
 import org.jboss.logging.Logger;
@@ -13,7 +10,6 @@ import org.jboss.logging.Logger;
 import com.ee.cne.util.LoginUtil;
 import com.ee.cne.ws.getctxwithoperations.generated.BusinessFault;
 import com.ee.cne.ws.getctxwithoperations.generated.ContextField;
-import com.ee.cne.ws.getctxwithoperations.generated.ContextFields;
 import com.ee.cne.ws.getctxwithoperations.generated.EIMessageContext2;
 import com.ee.cne.ws.getctxwithoperations.generated.GetContextWithOperations;
 import com.ee.cne.ws.getctxwithoperations.generated.GetContextWithOperationsRequest;
@@ -21,7 +17,6 @@ import com.ee.cne.ws.getctxwithoperations.generated.GetContextWithOperationsRequ
 import com.ee.cne.ws.getctxwithoperations.generated.GetContextWithOperationsResponse;
 import com.ee.cne.ws.getctxwithoperations.generated.GetContextWithOperationsService;
 import com.ee.cne.ws.getctxwithoperations.generated.ObjectFactory;
-import com.ee.cne.ws.getctxwithoperations.generated.Operations;
 import com.ee.cne.ws.getctxwithoperations.generated.TechnicalFault;
 
 public class GetCtxWithOperationsClient {
@@ -47,11 +42,10 @@ public class GetCtxWithOperationsClient {
 			messageContext.setRequestId(correlationId);
 			messageContext.setSender("EEA-JBOSS");
 			serviceRequest.setEiMessageContext2(messageContext);
-			serviceResponse = populateDummyResponse();
 
 			URL wsdlURL = new URL(LoginUtil.getProperties().getProperty(LoginUtil.TOOLKIT_WS_URL));
 			log.info("WSDL URL :: " + wsdlURL.toURI().toString());
-			GetContextWithOperationsService service = new GetContextWithOperationsService(wsdlURL);
+			GetContextWithOperationsService service = new GetContextWithOperationsServiceImpl(wsdlURL);
 			GetContextWithOperations ctxport = service.getGetContextWithOperations10();
 			serviceResponse = ctxport.getContextWithOperations(serviceRequest);
 
@@ -91,35 +85,4 @@ public class GetCtxWithOperationsClient {
 		return toolkitLoginInfo;
 	}
 
-	public static GetContextWithOperationsResponse populateDummyResponse() {
-
-		GetContextWithOperationsResponse response = new GetContextWithOperationsResponse();
-		com.ee.cne.ws.getctxwithoperations.generated.GetContextWithOperationsResponse.Message message = new com.ee.cne.ws.getctxwithoperations.generated.GetContextWithOperationsResponse.Message();
-
-		ContextFields fields = new ContextFields();
-		ContextField field1 = new ContextField();
-		field1.setFieldName("customer.customerDetails.msisdn");
-		field1.setFieldValue(UUID.randomUUID().toString().toUpperCase());
-		fields.getContextField().add(field1);
-		ContextField field2 = new ContextField();
-		fields.getContextField().add(field2);
-		field2.setFieldName("user.username");
-		field2.setFieldValue("ccluser" + generateRandomIntIntRange(1, 5));
-		message.setContextFields(fields);
-
-		List<String> list = Arrays.asList("cc-user", "ccl-user", "soc-user");
-
-		Operations operations = new Operations();
-		operations.getOperation().add(list.get(generateRandomIntIntRange(0, 2)).toString());
-
-		message.setOperations(operations);
-		response.setMessage(message);
-
-		return response;
-	}
-
-	public static int generateRandomIntIntRange(int min, int max) {
-		Random r = new Random();
-		return r.nextInt((max - min) + 1) + min;
-	}
 }
