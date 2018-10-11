@@ -16,6 +16,7 @@ import org.apache.catalina.connector.Request;
 import org.apache.catalina.deploy.LoginConfig;
 import org.jboss.logging.Logger;
 
+import com.ee.cne.util.AuthenticationException;
 import com.ee.cne.util.LoginTypeEnum;
 import com.ee.cne.ws.getctxwithoperations.client.GetCtxWithOperationsClient;
 import com.ee.cne.ws.getctxwithoperations.client.ToolkitLoginInfo;
@@ -61,7 +62,7 @@ public class SMToolkitAuthenticator extends AuthenticatorBase {
 			if ((httpHeaderForSSOAuth == null || "".equals(httpHeaderForSSOAuth.trim()))
 					&& (contextKeyParamName == null || "".equals(contextKeyParamName.trim()))) {
 
-				throw new Exception("SM user ID and ContextParam both can not be null");
+				throw new AuthenticationException("SM user ID and ContextParam both can not be null");
 			}
 
 			if (httpHeaderForSSOAuth != null && !"".equals(httpHeaderForSSOAuth)) {
@@ -75,7 +76,7 @@ public class SMToolkitAuthenticator extends AuthenticatorBase {
 			}
 			log.info("Login Type :: " + loginType);
 			if (userName == null || "".equals(userName)) {
-				throw new Exception("User Id can not be null or blank");
+				throw new AuthenticationException("User Id can not be null or blank");
 			}
 
 			request.setAttribute("LOGIN_TYPE", loginType);
@@ -93,7 +94,7 @@ public class SMToolkitAuthenticator extends AuthenticatorBase {
 			request.setUserPrincipal(principal);
 
 			register(request, response, principal, HttpServletRequest.FORM_AUTH, userName, password);
-		} catch (Exception exc) {
+		} catch (AuthenticationException exc) {
 
 			log.error("Exception details :: " + exc.getMessage());
 			request.setAttribute(RequestDispatcher.ERROR_EXCEPTION, exc);

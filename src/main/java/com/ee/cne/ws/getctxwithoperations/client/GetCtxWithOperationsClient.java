@@ -1,12 +1,12 @@
 package com.ee.cne.ws.getctxwithoperations.client;
 
-import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.UUID;
 
 import org.jboss.logging.Logger;
 
+import com.ee.cne.util.AuthenticationException;
 import com.ee.cne.util.LoginUtil;
 import com.ee.cne.ws.getctxwithoperations.generated.BusinessFault;
 import com.ee.cne.ws.getctxwithoperations.generated.ContextField;
@@ -22,8 +22,7 @@ import com.ee.cne.ws.getctxwithoperations.generated.TechnicalFault;
 public class GetCtxWithOperationsClient {
 	private static final Logger log = Logger.getLogger(GetCtxWithOperationsClient.class);
 
-	public static ToolkitLoginInfo fetchToolkitAuthenticationDetails(String contextKeyParamName)
-			throws MalformedURLException {
+	public static ToolkitLoginInfo fetchToolkitAuthenticationDetails(String contextKeyParamName) throws AuthenticationException {
 
 		ToolkitLoginInfo toolkitLoginInfo = null;
 		try {
@@ -78,8 +77,10 @@ public class GetCtxWithOperationsClient {
 		} catch (BusinessFault | TechnicalFault | URISyntaxException exc) {
 
 			log.error("An error occured while calling service getGetContextWithOperations", exc);
-		} catch (Exception e2) {
-			log.error("An error occured while calling service getGetContextWithOperations", e2);
+			throw new AuthenticationException(exc);
+		} catch (Exception exc) {
+			log.error("An error occured while calling service getGetContextWithOperations", exc);
+			throw new AuthenticationException("Generic Exception", exc);
 		}
 
 		return toolkitLoginInfo;

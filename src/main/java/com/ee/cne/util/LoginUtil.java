@@ -1,5 +1,6 @@
 package com.ee.cne.util;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
@@ -20,6 +21,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.soap.SOAPMessage;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
@@ -89,7 +91,7 @@ public class LoginUtil {
 		tf.setOutputProperty(OutputKeys.INDENT, "yes");
 		Writer out = new StringWriter();
 		tf.transform(new DOMSource(xml), new StreamResult(out));
-		
+
 		return out.toString();
 	}
 
@@ -100,5 +102,28 @@ public class LoginUtil {
 		Document document = docBuilder.parse(new InputSource(new StringReader(str)));
 
 		return document;
+	}
+
+	public static String soapMessageToString(SOAPMessage message) throws Exception {
+		String result = null;
+
+		if (message != null) {
+			ByteArrayOutputStream baos = null;
+			try {
+				baos = new ByteArrayOutputStream();
+				message.writeTo(baos);
+				result = baos.toString();
+			} catch (IOException e) {
+				throw e;
+			} finally {
+				if (baos != null) {
+					try {
+						baos.close();
+					} catch (IOException ioe) {
+					}
+				}
+			}
+		}
+		return result;
 	}
 }
