@@ -2,5 +2,5 @@ package com.ee.cne.util;
 
 public enum LoginTypeEnum {
 
-	SM_LOGIN, TOOLKIT_LOGIN
+  SM_LOGIN, TOOLKIT_LOGIN
 }
