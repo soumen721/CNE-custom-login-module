@@ -37,6 +37,7 @@ public class LoginUtil {
   private static final Logger log = Logger.getLogger(LoginUtil.class);
   public static final String TOOLKIT_REDIRECT_URL = "toolkit.redirect.url";
   public static final String TOOLKIT_WS_URL = "toolkit.ws.url";
+  public static final String TOOLKIT_SENDER_NAME = "EEA-JBOSS";
 
   public static Properties getProperties() {
     Properties prop = new Properties();

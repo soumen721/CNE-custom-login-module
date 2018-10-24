@@ -38,7 +38,7 @@ public class GetCtxWithOperationsClient {
       EIMessageContext2 messageContext = new EIMessageContext2();
       messageContext.setCorrelationId(correlationId);
       messageContext.setRequestId(correlationId);
-      messageContext.setSender("EEA-JBOSS");
+      messageContext.setSender(LoginUtil.TOOLKIT_SENDER_NAME);
       serviceRequest.setEiMessageContext2(messageContext);
 
       URL wsdlURL = new URL(LoginUtil.getProperties().getProperty(LoginUtil.TOOLKIT_WS_URL));

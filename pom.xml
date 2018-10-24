@@ -97,7 +97,6 @@
 								<!-- transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer"> 
 									<mainClass>MainApp</mainClass> </transformer -->
 							</transformers>
-							<outputDirectory>C:\Project_Software\jboss-eap-6.4\modules\com\ee\cne\security\main</outputDirectory>
 						</configuration>
 					</execution>
 				</executions>
