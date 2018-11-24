@@ -27,7 +27,7 @@
 					</contextField>
 				</contextFields>
 				<operations>
-					<operation>PROFILE_CS</operation>
+					<operation>cc-user</operation>
 				</operations>
 			</message>
 		</ns7:getContextWithOperationsResponse>
