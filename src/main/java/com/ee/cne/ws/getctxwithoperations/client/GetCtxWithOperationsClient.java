@@ -53,11 +53,11 @@ public class GetCtxWithOperationsClient {
         if (serviceResponse.getMessage().getContextFields() != null
             && serviceResponse.getMessage().getContextFields().getContextField() != null) {
 
-          ContextField uId =
+          final ContextField uId =
               serviceResponse.getMessage().getContextFields().getContextField().stream()
                   .filter(e -> "user.username".equals(e.getFieldName())).findFirst().orElse(null);
 
-          ContextField msisdn = serviceResponse.getMessage().getContextFields().getContextField()
+          final ContextField msisdn = serviceResponse.getMessage().getContextFields().getContextField()
               .stream().filter(e -> "customer.customerDetails.msisdn".equals(e.getFieldName()))
               .findFirst().orElse(null);
 

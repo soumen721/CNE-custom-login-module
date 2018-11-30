@@ -22,7 +22,6 @@ public class SMToolkitAuthenticator extends AuthenticatorBase {
   private static final Logger log = Logger.getLogger(SMToolkitAuthenticator.class);
 
   private String httpHeaderForSSOAuth = null;
-  @SuppressWarnings("unused")
   private String httpHeaderForUserRole = null;
   @SuppressWarnings("unused")
   private String sessionCookieForSSOAuth = null;
@@ -96,7 +95,8 @@ public class SMToolkitAuthenticator extends AuthenticatorBase {
 
       log.error("Exception details :: " + exc.getMessage());
       request.setAttribute(RequestDispatcher.ERROR_EXCEPTION, exc);
-      response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, exc.getMessage());
+      response.sendRedirect("loginErrorServlet"); 
+      //response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, exc.getMessage());
     }
 
     return true;
@@ -133,8 +133,9 @@ public class SMToolkitAuthenticator extends AuthenticatorBase {
     this.httpHeaderForUserRole = request.getHeader("HTTP_SM_ROLES");
     this.sessionCookieForSSOAuth = request.getHeader("SMSESSION");
     this.contextKeyParamName = request.getParameter("context");
-    log.info(
-        "SM USER ID :" + httpHeaderForSSOAuth + "\t|contextKeyParamName : " + contextKeyParamName);
+    
+    log.info("SM USER ID :" + httpHeaderForSSOAuth + "\t|httpHeaderForUserRole : "
+        + httpHeaderForUserRole + "\t|contextKeyParamName : " + contextKeyParamName);
   }
 
   private void populateToolkitRequestAttributes(Request request,
