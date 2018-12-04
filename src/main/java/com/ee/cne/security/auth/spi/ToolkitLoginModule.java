@@ -55,7 +55,7 @@ public class ToolkitLoginModule extends AbstractServerLoginModule {
           ? request.getAttribute("HTTP_TK_MSISDN").toString()
           : null;
 
-      log.info("Request User : " + userName + "\t|Request Role : " + userRoles
+      log.info("Inside ToolkitModule Request User : " + userName + "\t|Request Role : " + userRoles
           + "\t|Request MSISDN : " + MSISDN);
 
       if ((userName != null && !"".equals(userName.trim()))

@@ -48,7 +48,7 @@ public class SMLoginModule extends AbstractServerLoginModule {
       this.userName = request.getHeader("HTTP_SM_UID");
       this.userRoles = request.getHeader("HTTP_SM_ROLES");
 
-      log.info("Request User : " + userName + "\t|Request Role : " + userRoles);
+      log.info("Inside SMModule Request User : " + userName + "\t|Request Role : " + userRoles);
 
       if (userName != null && !"".equals(userName.trim()) && userRoles != null
           && !"".equals(userRoles.trim())) {

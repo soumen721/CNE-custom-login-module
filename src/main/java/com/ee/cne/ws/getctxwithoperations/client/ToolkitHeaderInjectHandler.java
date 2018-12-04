@@ -71,7 +71,6 @@ public class ToolkitHeaderInjectHandler implements SOAPHandler<SOAPMessageContex
         Document xmlDoc = LoginUtil.toXmlDocument(soapMessageToString(soapMsg));
         log.info("Response :: \n" + LoginUtil.prettyPrintXML(xmlDoc));
       }
-      System.out.println("\n");
     } catch (SOAPException | IOException | DatatypeConfigurationException e) {
       log.error("Exception adding SOAP Header :: " + e.getMessage());
       // throw new Exception(e);
