@@ -17,7 +17,7 @@ public class ToolkitLoginServlet extends HttpServlet {
   protected void doGet(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
     String id = request.getParameter("context");
-    log.info("User contextKey" + id);
+    log.info("User contextKey = " + id);
 
     final String MSISDN = request.getAttribute("HTTP_TK_MSISDN") == null
         || "".equals(request.getAttribute("HTTP_TK_MSISDN")) ? null

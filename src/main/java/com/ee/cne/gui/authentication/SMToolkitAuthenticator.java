@@ -95,7 +95,7 @@ public class SMToolkitAuthenticator extends AuthenticatorBase {
 
       log.error("Exception details :: " + exc.getMessage());
       request.setAttribute(RequestDispatcher.ERROR_EXCEPTION, exc);
-      response.sendRedirect("loginErrorServlet"); 
+      response.sendRedirect("loginError"); 
       //response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, exc.getMessage());
     }
 
