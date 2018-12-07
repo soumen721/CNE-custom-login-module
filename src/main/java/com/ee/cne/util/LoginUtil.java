@@ -35,6 +35,10 @@ import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
+/**
+ * @author esonchy
+ *
+ */
 public class LoginUtil {
 
   private static final Logger log = Logger.getLogger(LoginUtil.class);
@@ -47,6 +51,9 @@ public class LoginUtil {
 
   }
 
+  /**
+   * @return
+   */
   public static synchronized Properties getProperties() {
     try {
       if (properties != null) {
@@ -63,6 +70,11 @@ public class LoginUtil {
     return properties;
   }
 
+  /**
+   * @param date
+   * @return
+   * @throws DatatypeConfigurationException
+   */
   public static XMLGregorianCalendar toXMLCalender(LocalDateTime date)
       throws DatatypeConfigurationException {
 
@@ -70,6 +82,11 @@ public class LoginUtil {
     return DatatypeFactory.newInstance().newXMLGregorianCalendar(gcal);
   }
 
+  /**
+   * @param principal
+   * @param roles
+   * @return
+   */
   public static Group[] getGroups(Principal principal, final String roles) {
 
     Group roleGroup = new SimpleGroup("Roles");
@@ -84,6 +101,11 @@ public class LoginUtil {
     return groups;
   }
 
+  /**
+   * @param xml
+   * @return
+   * @throws TransformerException
+   */
   public static final String prettyPrintXML(Document xml) throws TransformerException {
 
     TransformerFactory factory = TransformerFactory.newInstance();
@@ -97,6 +119,13 @@ public class LoginUtil {
     return out.toString();
   }
 
+  /**
+   * @param str
+   * @return
+   * @throws ParserConfigurationException
+   * @throws SAXException
+   * @throws IOException
+   */
   public static Document toXmlDocument(String str)
       throws ParserConfigurationException, SAXException, IOException {
 
@@ -106,6 +135,12 @@ public class LoginUtil {
     return docBuilder.parse(new InputSource(new StringReader(str)));
   }
 
+  /**
+   * @param message
+   * @return
+   * @throws SOAPException
+   * @throws IOException
+   */
   public static String soapMessageToString(SOAPMessage message) throws SOAPException, IOException {
     String result = null;
 

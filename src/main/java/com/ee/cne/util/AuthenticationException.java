@@ -1,5 +1,9 @@
 package com.ee.cne.util;
 
+/**
+ * @author esonchy
+ *
+ */
 public class AuthenticationException extends Exception {
 
   private static final long serialVersionUID = 1L;

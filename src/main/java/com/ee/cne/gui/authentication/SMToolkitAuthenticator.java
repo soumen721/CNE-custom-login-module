@@ -18,6 +18,10 @@ import com.ee.cne.util.LoginTypeEnum;
 import com.ee.cne.ws.getctxwithoperations.client.GetCtxWithOperationsClient;
 import com.ee.cne.ws.getctxwithoperations.client.ToolkitLoginInfo;
 
+/**
+ * @author esonchy
+ *
+ */
 public class SMToolkitAuthenticator extends AuthenticatorBase {
   private static final Logger log = Logger.getLogger(SMToolkitAuthenticator.class);
 
@@ -30,6 +34,9 @@ public class SMToolkitAuthenticator extends AuthenticatorBase {
   private String httpHeaderToolkitUserRole = null;
   private String httpHeaderToolkitMSISDN = null;
 
+  /*
+   * This method is being use as Gateway of Authentication module
+   */
   @Override
   public boolean authenticate(Request request, HttpServletResponse response, LoginConfig config)
       throws IOException {
@@ -95,13 +102,19 @@ public class SMToolkitAuthenticator extends AuthenticatorBase {
 
       log.error("Exception details :: " + exc.getMessage());
       request.setAttribute(RequestDispatcher.ERROR_EXCEPTION, exc);
-      response.sendRedirect("loginError"); 
-      //response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, exc.getMessage());
+      response.sendRedirect("loginError");
+      // response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, exc.getMessage());
     }
 
     return true;
   }
 
+  /**
+   * @param request
+   * @param response
+   * @param config
+   * @throws IOException
+   */
   protected void forwardToErrorPage(Request request, HttpServletResponse response,
       LoginConfig config) throws IOException {
     RequestDispatcher disp =
@@ -116,6 +129,9 @@ public class SMToolkitAuthenticator extends AuthenticatorBase {
     }
   }
 
+  /**
+   * reset header details to null
+   */
   private void resetHeaderValues() {
     this.httpHeaderForSSOAuth = null;
     this.httpHeaderForUserRole = null;
@@ -127,23 +143,31 @@ public class SMToolkitAuthenticator extends AuthenticatorBase {
     this.httpHeaderToolkitMSISDN = null;
   }
 
+  /**
+   * @param request
+   */
   private void retriveSMRequestAttributes(Request request) {
 
     this.httpHeaderForSSOAuth = request.getHeader("HTTP_SM_UID");
     this.httpHeaderForUserRole = request.getHeader("HTTP_SM_ROLES");
     this.sessionCookieForSSOAuth = request.getHeader("SMSESSION");
     this.contextKeyParamName = request.getParameter("context");
-    
+
     log.info("SM USER ID :" + httpHeaderForSSOAuth + "\t|httpHeaderForUserRole : "
         + httpHeaderForUserRole + "\t|contextKeyParamName : " + contextKeyParamName);
   }
 
+  /**
+   * @param request
+   * @param toolkitLoginInfo
+   */
   private void populateToolkitRequestAttributes(Request request,
       ToolkitLoginInfo toolkitLoginInfo) {
 
     this.httpHeaderToolkitUserId = toolkitLoginInfo.getuId();
-    this.httpHeaderToolkitUserRole = toolkitLoginInfo.getRoleList() != null ? toolkitLoginInfo
-        .getRoleList().stream().collect(Collectors.joining(",")) : null;
+    this.httpHeaderToolkitUserRole = toolkitLoginInfo.getRoleList() != null
+        ? toolkitLoginInfo.getRoleList().stream().collect(Collectors.joining(","))
+        : null;
     this.httpHeaderToolkitMSISDN = toolkitLoginInfo.getMsisdn();
 
     request.setAttribute("HTTP_TK_UID", httpHeaderToolkitUserId);

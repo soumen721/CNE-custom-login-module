@@ -21,9 +21,16 @@ import org.jboss.logging.Logger;
 import org.w3c.dom.Document;
 import com.ee.cne.util.LoginUtil;
 
+/**
+ * @author esonchy
+ *
+ */
 public class ToolkitHeaderInjectHandler implements SOAPHandler<SOAPMessageContext> {
   private static final Logger log = Logger.getLogger(ToolkitHeaderInjectHandler.class);
 
+  /* (non-Javadoc)
+   * @see javax.xml.ws.handler.Handler#handleMessage(javax.xml.ws.handler.MessageContext)
+   */
   @Override
   public boolean handleMessage(SOAPMessageContext context) {
     final QName _TrackingHeader_QNAME = new QName(
@@ -74,12 +81,18 @@ public class ToolkitHeaderInjectHandler implements SOAPHandler<SOAPMessageContex
 
   }
 
+  /* (non-Javadoc)
+   * @see javax.xml.ws.handler.Handler#handleFault(javax.xml.ws.handler.MessageContext)
+   */
   @Override
   public boolean handleFault(SOAPMessageContext context) {
     log.debug("Client : handleFault()......");
     return true;
   }
 
+  /* (non-Javadoc)
+   * @see javax.xml.ws.handler.Handler#close(javax.xml.ws.handler.MessageContext)
+   */
   @Override
   public void close(MessageContext context) {
     log.debug("\nClient : close()......");
@@ -91,6 +104,12 @@ public class ToolkitHeaderInjectHandler implements SOAPHandler<SOAPMessageContex
     return Collections.emptySet();
   }
 
+  /**
+   * @param message
+   * @return
+   * @throws SOAPException
+   * @throws IOException
+   */
   public String soapMessageToString(SOAPMessage message) throws SOAPException, IOException  {
     String result = null;
 

@@ -14,6 +14,10 @@ import org.jboss.security.auth.spi.AbstractServerLoginModule;
 import com.ee.cne.util.LoginTypeEnum;
 import com.ee.cne.util.LoginUtil;
 
+/**
+ * @author esonchy
+ *
+ */
 public class SMLoginModule extends AbstractServerLoginModule {
   private static final Logger logger = Logger.getLogger(SMLoginModule.class);
 
@@ -25,6 +29,9 @@ public class SMLoginModule extends AbstractServerLoginModule {
   private String userName = null;
   private String userRoles = null;
 
+  /* (non-Javadoc)
+   * @see org.jboss.security.auth.spi.AbstractServerLoginModule#initialize(javax.security.auth.Subject, javax.security.auth.callback.CallbackHandler, java.util.Map, java.util.Map)
+   */
   @Override
   @SuppressWarnings({"unchecked", "rawtypes"})
   public void initialize(Subject subject, CallbackHandler callbackHandler, Map sharedState,
@@ -33,6 +40,9 @@ public class SMLoginModule extends AbstractServerLoginModule {
     super.initialize(subject, callbackHandler, sharedState, options);
   }
 
+  /* (non-Javadoc)
+   * @see org.jboss.security.auth.spi.AbstractServerLoginModule#login()
+   */
   @Override
   public boolean login() throws LoginException {
     logger.info("Inside SMLoginModule >> login");
@@ -66,6 +76,9 @@ public class SMLoginModule extends AbstractServerLoginModule {
     return false;
   }
 
+  /* (non-Javadoc)
+   * @see org.jboss.security.auth.spi.AbstractServerLoginModule#getIdentity()
+   */
   @Override
   protected Principal getIdentity() {
     try {
@@ -77,6 +90,9 @@ public class SMLoginModule extends AbstractServerLoginModule {
     return principal;
   }
 
+  /* (non-Javadoc)
+   * @see org.jboss.security.auth.spi.AbstractServerLoginModule#getRoleSets()
+   */
   @Override
   protected Group[] getRoleSets() {
 

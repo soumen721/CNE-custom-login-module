@@ -17,6 +17,10 @@ import com.ee.cne.ws.getctxwithoperations.generated.GetContextWithOperationsServ
 import com.ee.cne.ws.getctxwithoperations.generated.ObjectFactory;
 import com.ee.cne.ws.getctxwithoperations.generated.TechnicalFault;
 
+/**
+ * @author esonchy
+ *
+ */
 public class GetCtxWithOperationsClient {
   private static final Logger log = Logger.getLogger(GetCtxWithOperationsClient.class);
 
@@ -24,6 +28,11 @@ public class GetCtxWithOperationsClient {
 
   }
 
+  /**
+   * @param contextKeyParamName
+   * @return
+   * @throws AuthenticationException
+   */
   public static ToolkitLoginInfo fetchToolkitAuthenticationDetails(String contextKeyParamName)
       throws AuthenticationException {
 
