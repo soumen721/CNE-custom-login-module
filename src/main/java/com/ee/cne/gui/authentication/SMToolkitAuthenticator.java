@@ -36,7 +36,7 @@ public class SMToolkitAuthenticator extends AuthenticatorBase {
 
     try {
       String userName = null;
-      String password = "";
+      String userPass = "";
       LoginTypeEnum loginType = null;
       Principal principal = request.getUserPrincipal();
 
@@ -78,7 +78,7 @@ public class SMToolkitAuthenticator extends AuthenticatorBase {
 
       request.setAttribute("LOGIN_TYPE", loginType);
       final Realm realm = context.getRealm();
-      principal = realm.authenticate(userName, password);
+      principal = realm.authenticate(userName, userPass);
 
       resetHeaderValues();
       if (principal == null) {
@@ -87,10 +87,10 @@ public class SMToolkitAuthenticator extends AuthenticatorBase {
 
       Session session = request.getSessionInternal(true);
       session.setNote(Constants.SESS_USERNAME_NOTE, userName);
-      session.setNote(Constants.SESS_PASSWORD_NOTE, password);
+      session.setNote(Constants.SESS_PASSWORD_NOTE, userPass);
       request.setUserPrincipal(principal);
 
-      register(request, response, principal, HttpServletRequest.FORM_AUTH, userName, password);
+      register(request, response, principal, HttpServletRequest.FORM_AUTH, userName, userPass);
     } catch (AuthenticationException exc) {
 
       log.error("Exception details :: " + exc.getMessage());
@@ -141,9 +141,9 @@ public class SMToolkitAuthenticator extends AuthenticatorBase {
   private void populateToolkitRequestAttributes(Request request,
       ToolkitLoginInfo toolkitLoginInfo) {
 
-    this.httpHeaderToolkitUserId = toolkitLoginInfo.getUid();
+    this.httpHeaderToolkitUserId = toolkitLoginInfo.getuId();
     this.httpHeaderToolkitUserRole = toolkitLoginInfo.getRoleList() != null ? toolkitLoginInfo
-        .getRoleList().stream().map(e -> e.toString()).collect(Collectors.joining(",")) : null;
+        .getRoleList().stream().collect(Collectors.joining(",")) : null;
     this.httpHeaderToolkitMSISDN = toolkitLoginInfo.getMsisdn();
 
     request.setAttribute("HTTP_TK_UID", httpHeaderToolkitUserId);

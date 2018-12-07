@@ -16,7 +16,7 @@ import com.ee.cne.util.LoginUtil;
 
 public class ToolkitLoginModule extends AbstractServerLoginModule {
 
-  private static final Logger log = Logger.getLogger(ToolkitLoginModule.class);
+  private static final Logger logger = Logger.getLogger(ToolkitLoginModule.class);
 
   private static final String HEADER_USER_NAME = "headerUserName";
   private static final String HEADER_ROLE = "headerRole";
@@ -26,6 +26,7 @@ public class ToolkitLoginModule extends AbstractServerLoginModule {
   private String userName = null;
   private String userRoles = null;
 
+  @Override
   @SuppressWarnings({"unchecked", "rawtypes"})
   public void initialize(Subject subject, CallbackHandler callbackHandler, Map sharedState,
       Map options) {
@@ -34,8 +35,9 @@ public class ToolkitLoginModule extends AbstractServerLoginModule {
     super.initialize(subject, callbackHandler, sharedState, options);
   }
 
+  @Override
   public boolean login() throws LoginException {
-    log.info("Inside ToolkitLoginModule >> login");
+    logger.info("Inside ToolkitLoginModule >> login");
     super.loginOk = false;
 
     try {
@@ -55,8 +57,8 @@ public class ToolkitLoginModule extends AbstractServerLoginModule {
           ? request.getAttribute("HTTP_TK_MSISDN").toString()
           : null;
 
-      log.info("Inside ToolkitModule Request User : " + userName + "\t|Request Role : " + userRoles
-          + "\t|Request MSISDN : " + MSISDN);
+      logger.info("Inside ToolkitModule Request User : " + userName + "\t|Request Role : "
+          + userRoles + "\t|Request MSISDN : " + MSISDN);
 
       if ((userName != null && !"".equals(userName.trim()))
           && (userRoles != null && !"".equals(userRoles.trim()))) {
@@ -66,9 +68,7 @@ public class ToolkitLoginModule extends AbstractServerLoginModule {
       }
 
     } catch (PolicyContextException e) {
-      super.loginOk = false;
-
-      log.info("In Exception Inside ToolkitLoginModule -login method--> PolicyContextException"
+      logger.info("In Exception Inside ToolkitLoginModule -login method--> PolicyContextException"
           + e.getMessage());
     }
 
@@ -77,11 +77,10 @@ public class ToolkitLoginModule extends AbstractServerLoginModule {
 
   @Override
   protected Principal getIdentity() {
-
     try {
       principal = super.createIdentity(userName);
-    } catch (Throwable e) {
-      e.printStackTrace();
+    } catch (Exception e) {
+      logger.error("In getIdentity , Exception : " + e);
     }
 
     return principal;

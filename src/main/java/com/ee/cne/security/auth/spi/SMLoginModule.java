@@ -15,7 +15,7 @@ import com.ee.cne.util.LoginTypeEnum;
 import com.ee.cne.util.LoginUtil;
 
 public class SMLoginModule extends AbstractServerLoginModule {
-  private static final Logger log = Logger.getLogger(SMLoginModule.class);
+  private static final Logger logger = Logger.getLogger(SMLoginModule.class);
 
   private static final String HEADER_USER_NAME = "headerUserName";
   private static final String HEADER_ROLE = "headerRole";
@@ -25,6 +25,7 @@ public class SMLoginModule extends AbstractServerLoginModule {
   private String userName = null;
   private String userRoles = null;
 
+  @Override
   @SuppressWarnings({"unchecked", "rawtypes"})
   public void initialize(Subject subject, CallbackHandler callbackHandler, Map sharedState,
       Map options) {
@@ -32,8 +33,9 @@ public class SMLoginModule extends AbstractServerLoginModule {
     super.initialize(subject, callbackHandler, sharedState, options);
   }
 
+  @Override
   public boolean login() throws LoginException {
-    log.info("Inside SMLoginModule >> login");
+    logger.info("Inside SMLoginModule >> login");
     super.loginOk = false;
 
     try {
@@ -48,7 +50,7 @@ public class SMLoginModule extends AbstractServerLoginModule {
       this.userName = request.getHeader("HTTP_SM_UID");
       this.userRoles = request.getHeader("HTTP_SM_ROLES");
 
-      log.info("Inside SMModule Request User : " + userName + "\t|Request Role : " + userRoles);
+      logger.info("Inside SMModule Request User : " + userName + "\t|Request Role : " + userRoles);
 
       if (userName != null && !"".equals(userName.trim()) && userRoles != null
           && !"".equals(userRoles.trim())) {
@@ -57,9 +59,8 @@ public class SMLoginModule extends AbstractServerLoginModule {
         return true;
       }
     } catch (PolicyContextException e) {
-      super.loginOk = false;
-
-      log.error("In Exception Inside login method--> PolicyContextException" + e.getMessage());
+      logger.info("In Exception Inside SMLoginModule -login method--> PolicyContextException"
+          + e.getMessage());
     }
 
     return false;
@@ -67,11 +68,10 @@ public class SMLoginModule extends AbstractServerLoginModule {
 
   @Override
   protected Principal getIdentity() {
-
     try {
       principal = super.createIdentity(userName);
-    } catch (Throwable e) {
-      e.printStackTrace();
+    } catch (Exception e) {
+      logger.error("In getIdentity , Exception : " + e);
     }
 
     return principal;

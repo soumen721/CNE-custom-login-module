@@ -12,16 +12,16 @@ public class ToolkitLoginServlet extends HttpServlet {
 
   private static final long serialVersionUID = 1L;
   private static final Logger log = Logger.getLogger(ToolkitLoginServlet.class);
-
+private static String HTTP_TK_MSISDN = "HTTP_TK_MSISDN";
   @Override
   protected void doGet(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
     String id = request.getParameter("context");
     log.info("User contextKey = " + id);
 
-    final String MSISDN = request.getAttribute("HTTP_TK_MSISDN") == null
-        || "".equals(request.getAttribute("HTTP_TK_MSISDN")) ? null
-            : request.getAttribute("HTTP_TK_MSISDN").toString();
+    final String MSISDN = request.getAttribute(HTTP_TK_MSISDN) == null
+        || "".equals(request.getAttribute(HTTP_TK_MSISDN)) ? null
+            : request.getAttribute(HTTP_TK_MSISDN).toString();
 
     request.removeAttribute("HTTP_TK_UID");
     request.removeAttribute("");

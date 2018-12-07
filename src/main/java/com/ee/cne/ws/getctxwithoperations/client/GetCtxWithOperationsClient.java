@@ -20,6 +20,10 @@ import com.ee.cne.ws.getctxwithoperations.generated.TechnicalFault;
 public class GetCtxWithOperationsClient {
   private static final Logger log = Logger.getLogger(GetCtxWithOperationsClient.class);
 
+  private GetCtxWithOperationsClient() {
+
+  }
+
   public static ToolkitLoginInfo fetchToolkitAuthenticationDetails(String contextKeyParamName)
       throws AuthenticationException {
 
@@ -57,11 +61,12 @@ public class GetCtxWithOperationsClient {
               serviceResponse.getMessage().getContextFields().getContextField().stream()
                   .filter(e -> "user.username".equals(e.getFieldName())).findFirst().orElse(null);
 
-          final ContextField msisdn = serviceResponse.getMessage().getContextFields().getContextField()
-              .stream().filter(e -> "customer.customerDetails.msisdn".equals(e.getFieldName()))
-              .findFirst().orElse(null);
+          final ContextField msisdn =
+              serviceResponse.getMessage().getContextFields().getContextField().stream()
+                  .filter(e -> "customer.customerDetails.msisdn".equals(e.getFieldName()))
+                  .findFirst().orElse(null);
 
-          toolkitLoginInfo.setUid(uId != null ? uId.getFieldValue() : null);
+          toolkitLoginInfo.setuId(uId != null ? uId.getFieldValue() : null);
           toolkitLoginInfo.setMsisdn(msisdn != null ? msisdn.getFieldValue() : null);
         }
 
