@@ -120,7 +120,7 @@ public class ToolkitLoginModule extends AbstractServerLoginModule {
 
   @Override
   public boolean logout() throws LoginException {
-    subject.getPrincipals().remove(principal);
+    super.logout();
     return true;
   }
 }
