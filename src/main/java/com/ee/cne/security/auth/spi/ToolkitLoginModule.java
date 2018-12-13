@@ -30,8 +30,12 @@ public class ToolkitLoginModule extends AbstractServerLoginModule {
   private String userName = null;
   private String userRoles = null;
 
-  /* (non-Javadoc)
-   * @see org.jboss.security.auth.spi.AbstractServerLoginModule#initialize(javax.security.auth.Subject, javax.security.auth.callback.CallbackHandler, java.util.Map, java.util.Map)
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.jboss.security.auth.spi.AbstractServerLoginModule#initialize(javax.security.auth.Subject,
+   * javax.security.auth.callback.CallbackHandler, java.util.Map, java.util.Map)
    */
   @Override
   @SuppressWarnings({"unchecked", "rawtypes"})
@@ -42,7 +46,9 @@ public class ToolkitLoginModule extends AbstractServerLoginModule {
     super.initialize(subject, callbackHandler, sharedState, options);
   }
 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see org.jboss.security.auth.spi.AbstractServerLoginModule#login()
    */
   @Override
@@ -85,7 +91,9 @@ public class ToolkitLoginModule extends AbstractServerLoginModule {
     return false;
   }
 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see org.jboss.security.auth.spi.AbstractServerLoginModule#getIdentity()
    */
   @Override
@@ -99,12 +107,20 @@ public class ToolkitLoginModule extends AbstractServerLoginModule {
     return principal;
   }
 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see org.jboss.security.auth.spi.AbstractServerLoginModule#getRoleSets()
    */
   @Override
   protected Group[] getRoleSets() {
 
     return LoginUtil.getGroups(this.principal, userRoles);
+  }
+
+  @Override
+  public boolean logout() throws LoginException {
+    subject.getPrincipals().remove(principal);
+    return true;
   }
 }
