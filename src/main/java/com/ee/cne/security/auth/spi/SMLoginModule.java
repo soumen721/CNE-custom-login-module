@@ -2,6 +2,7 @@ package com.ee.cne.security.auth.spi;
 
 import java.security.Principal;
 import java.security.acl.Group;
+import java.util.List;
 import java.util.Map;
 import javax.security.auth.Subject;
 import javax.security.auth.callback.CallbackHandler;
@@ -27,7 +28,7 @@ public class SMLoginModule extends AbstractServerLoginModule {
 
   private Principal principal;
   private String userName = null;
-  private String userRoles = null;
+  private List<String> userRoles = null;
 
   /*
    * (non-Javadoc)
@@ -63,13 +64,14 @@ public class SMLoginModule extends AbstractServerLoginModule {
         return false;
       }
 
+      String roles = request.getHeader("HTTP_SM_ROLES");
       this.userName = request.getHeader("HTTP_SM_UID");
-      this.userRoles = request.getHeader("HTTP_SM_ROLES");
+      this.userRoles = LoginUtil.getValidRoles(LoginTypeEnum.SM_LOGIN, roles);
 
       logger.info("Inside SMModule Request User : " + userName + "\t|Request Role : " + userRoles);
 
       if (userName != null && !"".equals(userName.trim()) && userRoles != null
-          && !"".equals(userRoles.trim())) {
+          && !userRoles.isEmpty()) {
 
         super.loginOk = true;
         return true;

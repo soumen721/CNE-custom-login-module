@@ -33,7 +33,6 @@ private static String HTTP_TK_MSISDN = "HTTP_TK_MSISDN";
 
     request.removeAttribute("HTTP_TK_UID");
     request.removeAttribute("");
-    request.getSession(true).invalidate();  //TODO remove later 
     String redirecURL = LoginUtil.getProperties().getProperty(LoginUtil.TOOLKIT_REDIRECT_URL);
 
     if (MSISDN != null) {

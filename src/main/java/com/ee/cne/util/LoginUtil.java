@@ -10,9 +10,12 @@ import java.security.acl.Group;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.GregorianCalendar;
+import java.util.List;
 import java.util.Objects;
 import java.util.Properties;
+import java.util.stream.Collectors;
 import javax.xml.XMLConstants;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
@@ -45,6 +48,8 @@ public class LoginUtil {
   public static final String TOOLKIT_REDIRECT_URL = "toolkit.redirect.url";
   public static final String TOOLKIT_WS_URL = "toolkit.ws.url";
   public static final String TOOLKIT_SENDER_NAME = "recycle-and-reward";
+  public static final String SM_USER_ROLES = "sm.user.roles";
+  public static final String TOOLKIT_USER_ROLES = "toolkit.user.roles";
   private static Properties properties;
 
   private LoginUtil() {
@@ -71,6 +76,22 @@ public class LoginUtil {
   }
 
   /**
+   * @return
+   */
+  public static List<String> getSMRoles() {
+    String roles = getProperties().getProperty(SM_USER_ROLES);
+    return roles != null ? Arrays.asList(roles.split(",")) : Collections.emptyList();
+  }
+
+  /**
+   * @return
+   */
+  public static List<String> getToolkitRoles() {
+    String roles = getProperties().getProperty(TOOLKIT_USER_ROLES);
+    return roles != null ? Arrays.asList(roles.split(",")) : Collections.emptyList();
+  }
+
+  /**
    * @param date
    * @return
    * @throws DatatypeConfigurationException
@@ -87,13 +108,13 @@ public class LoginUtil {
    * @param roles
    * @return
    */
-  public static Group[] getGroups(Principal principal, final String roles) {
+  public static Group[] getGroups(Principal principal, final List<String> roles) {
 
     Group roleGroup = new SimpleGroup("Roles");
     Group callerPrincipal = new SimpleGroup("CallerPrincipal");
     Group[] groups = {roleGroup, callerPrincipal};
 
-    Arrays.asList(roles.split(",")).stream().filter(e -> !Objects.isNull(e))
+    roles.stream().filter(e -> !Objects.isNull(e))
         .forEach(ar -> roleGroup.addMember(new SimplePrincipal(ar)));
 
     callerPrincipal.addMember(principal);
@@ -154,5 +175,19 @@ public class LoginUtil {
       }
     }
     return result;
+  }
+
+  public static List<String> getValidRoles(LoginTypeEnum loginType, String roles) {
+    List<String> validRoles = Collections.emptyList();
+    if (LoginTypeEnum.SM_LOGIN == loginType) {
+      validRoles = getSMRoles();
+    } else if (LoginTypeEnum.TOOLKIT_LOGIN == loginType) {
+      validRoles = getToolkitRoles();
+    }
+    final List<String> rolesValid = validRoles;
+
+
+    return roles != null ? Arrays.asList(roles.split(",")).stream()
+        .filter(e -> rolesValid.contains(e)).collect(Collectors.toList()) : Collections.emptyList();
   }
 }

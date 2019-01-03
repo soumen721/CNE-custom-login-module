@@ -2,6 +2,7 @@ package com.ee.cne.security.auth.spi;
 
 import java.security.Principal;
 import java.security.acl.Group;
+import java.util.List;
 import java.util.Map;
 import javax.security.auth.Subject;
 import javax.security.auth.callback.CallbackHandler;
@@ -28,7 +29,7 @@ public class ToolkitLoginModule extends AbstractServerLoginModule {
 
   private Principal principal;
   private String userName = null;
-  private String userRoles = null;
+  private List<String> userRoles = null;
 
   /*
    * (non-Javadoc)
@@ -65,10 +66,13 @@ public class ToolkitLoginModule extends AbstractServerLoginModule {
         return false;
       }
 
-      this.userName = request.getAttribute("HTTP_TK_UID").toString();
-      this.userRoles = request.getAttribute("HTTP_TK_ROLES") != null
+      String roles = request.getAttribute("HTTP_TK_ROLES") != null
           ? request.getAttribute("HTTP_TK_ROLES").toString()
           : null;
+
+      this.userName = request.getAttribute("HTTP_TK_UID").toString();
+      this.userRoles = LoginUtil.getValidRoles(LoginTypeEnum.TOOLKIT_LOGIN, roles);
+      
       final String MSISDN = request.getAttribute("HTTP_TK_MSISDN") != null
           ? request.getAttribute("HTTP_TK_MSISDN").toString()
           : null;
@@ -77,7 +81,7 @@ public class ToolkitLoginModule extends AbstractServerLoginModule {
           + userRoles + "\t|Request MSISDN : " + MSISDN);
 
       if ((userName != null && !"".equals(userName.trim()))
-          && (userRoles != null && !"".equals(userRoles.trim()))) {
+          && (userRoles != null && !userRoles.isEmpty())) {
 
         super.loginOk = true;
         return true;
