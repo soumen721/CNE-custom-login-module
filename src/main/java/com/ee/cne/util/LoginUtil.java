@@ -188,6 +188,6 @@ public class LoginUtil {
 
 
     return roles != null ? Arrays.asList(roles.split(",")).stream()
-        .filter(e -> rolesValid.contains(e)).collect(Collectors.toList()) : Collections.emptyList();
+        .filter(rolesValid::contains).collect(Collectors.toList()) : Collections.emptyList();
   }
 }

@@ -3,3 +3,5 @@
 /org.eclipse.wst.common.project.facet.core.xml
 /org.eclipse.wst.validation.prefs
 /org.hibernate.eclipse.console.prefs
+/org.eclipse.m2e.core.prefs
+/.gitignore

@@ -166,7 +166,7 @@ public class SMToolkitAuthenticator extends AuthenticatorBase {
 
     this.httpHeaderToolkitUserId = toolkitLoginInfo.getuId();
     this.httpHeaderToolkitUserRole = toolkitLoginInfo.getRoleList() != null
-        ? toolkitLoginInfo.getRoleList().stream().collect(Collectors.joining(","))
+        ? String.join(",", toolkitLoginInfo.getRoleList())
         : null;
     this.httpHeaderToolkitMSISDN = toolkitLoginInfo.getMsisdn();
 

@@ -8,3 +8,5 @@
 /org.hibernate.eclipse.console.prefs
 /bin/
 /dependency-reduced-pom.xml
+/.idea/
+/CNE-custom-login-module.iml
