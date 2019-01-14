@@ -2,7 +2,6 @@ package com.ee.cne.gui.authentication;
 
 import java.io.IOException;
 import java.security.Principal;
-import java.util.stream.Collectors;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;

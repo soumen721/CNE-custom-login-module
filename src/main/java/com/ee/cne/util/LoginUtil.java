@@ -47,7 +47,7 @@ public class LoginUtil {
   private static final Logger log = Logger.getLogger(LoginUtil.class);
   public static final String TOOLKIT_REDIRECT_URL = "toolkit.redirect.url";
   public static final String TOOLKIT_WS_URL = "toolkit.ws.url";
-  public static final String TOOLKIT_SENDER_NAME = "recycle-and-reward";
+  public static final String TOOLKIT_SENDER_NAME = "eea";
   public static final String SM_USER_ROLES = "sm.user.roles";
   public static final String TOOLKIT_USER_ROLES = "toolkit.user.roles";
   private static Properties properties;
