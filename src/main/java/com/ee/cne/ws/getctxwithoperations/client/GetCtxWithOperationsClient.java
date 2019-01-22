@@ -1,8 +1,9 @@
 package com.ee.cne.ws.getctxwithoperations.client;
 
-import java.net.URISyntaxException;
-import java.net.URL;
+import java.util.Arrays;
 import java.util.UUID;
+import org.apache.cxf.frontend.ClientFactoryBean;
+import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;
 import org.jboss.logging.Logger;
 import com.ee.cne.util.AuthenticationException;
 import com.ee.cne.util.LoginUtil;
@@ -13,7 +14,6 @@ import com.ee.cne.ws.getctxwithoperations.generated.GetContextWithOperations;
 import com.ee.cne.ws.getctxwithoperations.generated.GetContextWithOperationsRequest;
 import com.ee.cne.ws.getctxwithoperations.generated.GetContextWithOperationsRequest.Message;
 import com.ee.cne.ws.getctxwithoperations.generated.GetContextWithOperationsResponse;
-import com.ee.cne.ws.getctxwithoperations.generated.GetContextWithOperationsService;
 import com.ee.cne.ws.getctxwithoperations.generated.ObjectFactory;
 import com.ee.cne.ws.getctxwithoperations.generated.TechnicalFault;
 
@@ -54,27 +54,29 @@ public class GetCtxWithOperationsClient {
       messageContext.setSender(LoginUtil.TOOLKIT_SENDER_NAME);
       serviceRequest.setEiMessageContext2(messageContext);
 
-      URL wsdlURL = new URL(LoginUtil.getProperties().getProperty(LoginUtil.TOOLKIT_WS_URL));
-      log.info("WSDL URL :: " + wsdlURL.toURI().toString());
-      GetContextWithOperationsService service = new GetContextWithOperationsServiceImpl(wsdlURL);
-      GetContextWithOperations ctxport = service.getGetContextWithOperations10();
-      serviceResponse = ctxport.getContextWithOperations(serviceRequest);
+      String toolkitURL = LoginUtil.getProperties().getProperty(LoginUtil.TOOLKIT_WS_URL);
+      log.info("WSDL URL :: " + toolkitURL);
+
+      JaxWsProxyFactoryBean proxyFactory = new JaxWsProxyFactoryBean();
+      proxyFactory.setHandlers(Arrays.asList(new ToolkitHeaderInjectHandler()));
+      ClientFactoryBean clientBean = proxyFactory.getClientFactoryBean();
+      clientBean.setAddress(toolkitURL);
+      clientBean.setServiceClass(GetContextWithOperations.class);
+      GetContextWithOperations client = (GetContextWithOperations) proxyFactory.create();
+      serviceResponse = client.getContextWithOperations(serviceRequest);
 
       if (serviceResponse != null && serviceResponse.getMessage() != null) {
         toolkitLoginInfo = new ToolkitLoginInfo();
 
         if (serviceResponse.getMessage().getContextFields() != null
             && serviceResponse.getMessage().getContextFields().getContextField() != null) {
-
           final ContextField uId =
               serviceResponse.getMessage().getContextFields().getContextField().stream()
                   .filter(e -> "user.username".equals(e.getFieldName())).findFirst().orElse(null);
-
           final ContextField msisdn =
               serviceResponse.getMessage().getContextFields().getContextField().stream()
                   .filter(e -> "customer.customerDetails.msisdn".equals(e.getFieldName()))
                   .findFirst().orElse(null);
-
           toolkitLoginInfo.setuId(uId != null ? uId.getFieldValue() : null);
           toolkitLoginInfo.setMsisdn(msisdn != null ? msisdn.getFieldValue() : null);
         }
@@ -87,8 +89,7 @@ public class GetCtxWithOperationsClient {
       } else {
         throw new BusinessFault("No valid Response Found");
       }
-
-    } catch (BusinessFault | TechnicalFault | URISyntaxException exc) {
+    } catch (BusinessFault | TechnicalFault exc) {
 
       log.error("An error occured while calling service getGetContextWithOperations", exc);
       throw new AuthenticationException(exc);
