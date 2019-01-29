@@ -66,12 +66,8 @@ public class SMLoginModule extends AbstractServerLoginModule {
         return false;
       }
 
-      System.out.println(request.getHeader(HTTP_SM_ROLES) != null ? request.getHeader(HTTP_SM_ROLES)
-          : request.getParameter(HTTP_SM_ROLES));
-      String roles = request.getHeader(HTTP_SM_ROLES) != null ? request.getHeader(HTTP_SM_ROLES)
-          : request.getParameter(HTTP_SM_ROLES);
-      this.userName = request.getHeader(HTTP_SM_UID) != null ? request.getHeader(HTTP_SM_UID)
-          : request.getParameter(HTTP_SM_UID);
+      String roles = request.getHeader(HTTP_SM_ROLES);
+      this.userName = request.getHeader(HTTP_SM_UID);
       this.userRoles = LoginUtil.getValidRoles(LoginTypeEnum.SM_LOGIN, roles);
 
       logger.info("Inside SMModule Request User : " + userName + "\t|Request Role : " + userRoles);
