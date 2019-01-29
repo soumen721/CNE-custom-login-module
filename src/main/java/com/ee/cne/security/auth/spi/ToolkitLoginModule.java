@@ -1,5 +1,8 @@
 package com.ee.cne.security.auth.spi;
 
+import static com.ee.cne.util.LoginUtil.HTTP_TK_UID;
+import static com.ee.cne.util.LoginUtil.HTTP_TK_ROLES;
+import static com.ee.cne.util.LoginUtil.HTTP_TK_MSISDN;
 import java.security.Principal;
 import java.security.acl.Group;
 import java.util.List;
@@ -66,15 +69,15 @@ public class ToolkitLoginModule extends AbstractServerLoginModule {
         return false;
       }
 
-      String roles = request.getAttribute("HTTP_TK_ROLES") != null
-          ? request.getAttribute("HTTP_TK_ROLES").toString()
+      String roles = request.getAttribute(HTTP_TK_ROLES) != null
+          ? request.getAttribute(HTTP_TK_ROLES).toString()
           : null;
 
-      this.userName = request.getAttribute("HTTP_TK_UID").toString();
+      this.userName = request.getAttribute(HTTP_TK_UID).toString();
       this.userRoles = LoginUtil.getValidRoles(LoginTypeEnum.TOOLKIT_LOGIN, roles);
       
-      final String MSISDN = request.getAttribute("HTTP_TK_MSISDN") != null
-          ? request.getAttribute("HTTP_TK_MSISDN").toString()
+      final String MSISDN = request.getAttribute(HTTP_TK_MSISDN) != null
+          ? request.getAttribute(HTTP_TK_MSISDN).toString()
           : null;
 
       logger.info("Inside ToolkitModule Request User : " + userName + "\t|Request Role : "

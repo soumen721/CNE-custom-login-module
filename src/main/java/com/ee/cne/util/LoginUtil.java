@@ -50,6 +50,12 @@ public class LoginUtil {
   public static final String TOOLKIT_SENDER_NAME = "eea";
   public static final String SM_USER_ROLES = "sm.user.roles";
   public static final String TOOLKIT_USER_ROLES = "toolkit.user.roles";
+  public static final String ROLES_SEPARATOR = "^";
+  public static final String HTTP_SM_UID = "SM_UID";
+  public static final String HTTP_SM_ROLES = "SM_ROLES";
+  public static final String HTTP_TK_UID = "HTTP_TK_UID";
+  public static final String HTTP_TK_ROLES = "HTTP_TK_ROLES";
+  public static final String HTTP_TK_MSISDN = "HTTP_TK_MSISDN";
   private static Properties properties;
 
   private LoginUtil() {
@@ -187,7 +193,7 @@ public class LoginUtil {
     final List<String> rolesValid = validRoles;
 
 
-    return roles != null ? Arrays.asList(roles.split(",")).stream()
+    return roles != null ? Arrays.asList(roles.split("\\"+ROLES_SEPARATOR)).stream()
         .filter(rolesValid::contains).collect(Collectors.toList()) : Collections.emptyList();
   }
 }

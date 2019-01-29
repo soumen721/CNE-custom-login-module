@@ -1,7 +1,14 @@
 package com.ee.cne.gui.authentication;
 
+import static com.ee.cne.util.LoginUtil.HTTP_SM_UID;
+import static com.ee.cne.util.LoginUtil.HTTP_SM_ROLES;
+import static com.ee.cne.util.LoginUtil.HTTP_TK_UID;
+import static com.ee.cne.util.LoginUtil.HTTP_TK_ROLES;
+import static com.ee.cne.util.LoginUtil.HTTP_TK_MSISDN;
+import static com.ee.cne.util.LoginUtil.ROLES_SEPARATOR;
 import java.io.IOException;
 import java.security.Principal;
+import java.util.Enumeration;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -147,13 +154,31 @@ public class SMToolkitAuthenticator extends AuthenticatorBase {
    */
   private void retriveSMRequestAttributes(Request request) {
 
-    this.httpHeaderForSSOAuth = request.getHeader("HTTP_SM_UID");
-    this.httpHeaderForUserRole = request.getHeader("HTTP_SM_ROLES");
+    this.httpHeaderForSSOAuth =
+        request.getHeader(HTTP_SM_UID) != null ? request.getHeader(HTTP_SM_UID)
+            : request.getParameter(HTTP_SM_UID);
+    this.httpHeaderForUserRole =
+        request.getHeader(HTTP_SM_ROLES) != null ? request.getHeader(HTTP_SM_ROLES)
+            : request.getParameter(HTTP_SM_ROLES);
     this.sessionCookieForSSOAuth = request.getHeader("SMSESSION");
     this.contextKeyParamName = request.getParameter("context");
 
     log.info("SM USER ID :" + httpHeaderForSSOAuth + "\t|httpHeaderForUserRole : "
         + httpHeaderForUserRole + "\t|contextKeyParamName : " + contextKeyParamName);
+    
+    //TODO need to remove later
+    Enumeration<String> headerNames = request.getHeaderNames();
+    while (headerNames.hasMoreElements()) {
+        String headerName = headerNames.nextElement();
+        System.out.print("HeaderName: "+headerName+"|\t");
+        Enumeration<String> headers = request.getHeaders(headerName);
+        while (headers.hasMoreElements()) {
+            String headerValue = headers.nextElement();
+            System.out.println("HeaderValue: "+headerValue);
+        }
+
+    }
+
   }
 
   /**
@@ -164,14 +189,14 @@ public class SMToolkitAuthenticator extends AuthenticatorBase {
       ToolkitLoginInfo toolkitLoginInfo) {
 
     this.httpHeaderToolkitUserId = toolkitLoginInfo.getuId();
-    this.httpHeaderToolkitUserRole = toolkitLoginInfo.getRoleList() != null
-        ? String.join(",", toolkitLoginInfo.getRoleList())
-        : null;
+    this.httpHeaderToolkitUserRole =
+        toolkitLoginInfo.getRoleList() != null ? String.join(ROLES_SEPARATOR, toolkitLoginInfo.getRoleList())
+            : null;
     this.httpHeaderToolkitMSISDN = toolkitLoginInfo.getMsisdn();
 
-    request.setAttribute("HTTP_TK_UID", httpHeaderToolkitUserId);
-    request.setAttribute("HTTP_TK_ROLES", httpHeaderToolkitUserRole);
-    request.setAttribute("HTTP_TK_MSISDN", httpHeaderToolkitMSISDN);
+    request.setAttribute(HTTP_TK_UID, httpHeaderToolkitUserId);
+    request.setAttribute(HTTP_TK_ROLES, httpHeaderToolkitUserRole);
+    request.setAttribute(HTTP_TK_MSISDN, httpHeaderToolkitMSISDN);
   }
 
 }

@@ -1,5 +1,7 @@
 package com.ee.cne.security.auth.spi;
 
+import static com.ee.cne.util.LoginUtil.HTTP_SM_UID;
+import static com.ee.cne.util.LoginUtil.HTTP_SM_ROLES;
 import java.security.Principal;
 import java.security.acl.Group;
 import java.util.List;
@@ -64,8 +66,12 @@ public class SMLoginModule extends AbstractServerLoginModule {
         return false;
       }
 
-      String roles = request.getHeader("HTTP_SM_ROLES");
-      this.userName = request.getHeader("HTTP_SM_UID");
+      System.out.println(request.getHeader(HTTP_SM_ROLES) != null ? request.getHeader(HTTP_SM_ROLES)
+          : request.getParameter(HTTP_SM_ROLES));
+      String roles = request.getHeader(HTTP_SM_ROLES) != null ? request.getHeader(HTTP_SM_ROLES)
+          : request.getParameter(HTTP_SM_ROLES);
+      this.userName = request.getHeader(HTTP_SM_UID) != null ? request.getHeader(HTTP_SM_UID)
+          : request.getParameter(HTTP_SM_UID);
       this.userRoles = LoginUtil.getValidRoles(LoginTypeEnum.SM_LOGIN, roles);
 
       logger.info("Inside SMModule Request User : " + userName + "\t|Request Role : " + userRoles);
